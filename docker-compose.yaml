@@ -11,6 +11,8 @@ services:
     image: confluentinc/cp-kafka:7.7.2
     hostname: kafka
     container_name: kafka
+    profiles:
+      - full
     ports:
       - "9092:9092"
     environment:
@@ -44,6 +46,8 @@ services:
     image: confluentinc/cp-kafka:7.7.2 # Use the same Kafka image to ensure tools are available
     container_name: kafka-init
     command: [ "/bin/bash", "/create_topics.sh" ]
+    profiles:
+      - full
     volumes:
       - ./docker/volumes/kafka/init/create-topics.sh:/create_topics.sh # Mount the script into the container
     depends_on:
@@ -57,6 +61,8 @@ services:
     # https://hub.docker.com/r/provectuslabs/kafka-ui
     image: provectuslabs/kafka-ui:v0.7.2
     container_name: kafka-ui
+    profiles:
+      - full
     ports:
       # Access the UI at http://localhost:8580
       - "8085:8080"
@@ -113,6 +119,8 @@ services:
     # -----
     image: localstack/localstack:4.11.1
     container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
+    profiles:
+      - full
     environment:
       # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
       - SERVICES=s3,sqs,lambda
@@ -151,6 +159,8 @@ services:
     image: postgis/postgis:15-3.3-alpine
     ports:
       - "5432:5432"
+    profiles:
+      - full
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pw
@@ -234,6 +244,8 @@ services:
   rabbitmq:
     image: rabbitmq:4.2.1-management
     container_name: rabbitmq
+    profiles:
+      - full
     networks:
       - infra_network
     ports:
@@ -257,6 +269,8 @@ services:
     #  curl http://localhost:9069/__admin/mappings | jq .
     image: wiremock/wiremock:3.13.2
     container_name: wiremock
+    profiles:
+      - full
     networks:
       - infra_network
     command:
