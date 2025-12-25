@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: poc-tdk-settings-l1-l2-service
+
+
+  # JACKSON configurations
+  jackson:
+    # default name strategy
+    property-naming-strategy: SNAKE_CASE
+    # ignore null properties in the serialization, similar to @JsonInclude(JsonInclude.Include.NON_NULL)
+    default-property-inclusion: non_null
+    deserialization:
+      # Throw an exception if a unknown propriety arrives in the request body, the default value is false
+      fail-on-unknown-properties: true
+      # throw an exception if a property annotated with @JsonIgnore arrives in the request body, the default value is false
+      fail-on-ignored-properties: true
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  web:
+    resources:
+      # Necessary to allowing to handle an exception when the request url do not match in any mapped route
+      # this only works when we don't have any static resource for example some web site
+      add-mappings: false
+
+  #  MongoDB configuration
+  data:
+    mongodb:
+      auto-index-creation: true
+      field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
+  mongodb:
+    uri: mongodb://me:me@localhost:27017/industries-settings-db?authSource=industries-settings-db
+
+# Enable health liveness and readiness
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      livenessState:
+        enabled: true
+      readinessState:
+        enabled: true
+
+server:
+  #max-http-header-size: 20480
+  max-http-request-header-size: 40KB
+
