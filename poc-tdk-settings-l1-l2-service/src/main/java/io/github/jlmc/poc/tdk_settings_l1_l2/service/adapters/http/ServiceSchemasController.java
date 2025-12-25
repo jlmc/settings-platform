@@ -1,7 +1,11 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http;
 
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.JsonSchema;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.ServiceJsonSchemas;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.ServiceJsonSchemasRepresentation;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.mappers.ServiceJsonSchemasRepresentationMapper;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.DeleteSchemaUseCase;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.GetServiceSchemasUseCase;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.PersistSchemaUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,90 +17,96 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+/**
+ * Controller for managing service JSON schemas.
+ */
 @RestController
 @RequestMapping(
-    path = "/schemas",
-    produces = "application/json",
-    consumes = "application/json"
+    path = "/schemas"
 )
 public class ServiceSchemasController {
 
+    private final PersistSchemaUseCase persistSchemaUseCase;
+    private final DeleteSchemaUseCase deleteSchemaUseCase;
+    private final GetServiceSchemasUseCase getServiceSchemasUseCase;
+    private final ServiceJsonSchemasRepresentationMapper mapper;
+
+    public ServiceSchemasController(PersistSchemaUseCase persistSchemaUseCase,
+                                    DeleteSchemaUseCase deleteSchemaUseCase,
+                                    GetServiceSchemasUseCase getServiceSchemasUseCase,
+                                    ServiceJsonSchemasRepresentationMapper mapper) {
+        this.persistSchemaUseCase = persistSchemaUseCase;
+        this.deleteSchemaUseCase = deleteSchemaUseCase;
+        this.getServiceSchemasUseCase = getServiceSchemasUseCase;
+        this.mapper = mapper;
+    }
+
+    /**
+     * Defines or updates the JSON schemas for a service.
+     *
+     * <p>Example call using curl:
+     * <pre>{@code
+     * curl -X PUT http://localhost:8080/schemas \
+     *   -H "Content-Type: application/json" \
+     *   -d '{
+     *     "serviceName": "my-service",
+     *     "jsonSchemas": [
+     *       {
+     *         "type": "ACCOUNT",
+     *         "value": {
+     *           "type": "object",
+     *           "properties": {
+     *             "setting1": { "type": "string" }
+     *           }
+     *         }
+     *       }
+     *     ],
+     *     "rsa": {
+     *       "publicKey": "ssh-rsa AAAAB3Nza..."
+     *     }
+     *   }'
+     * }</pre>
+     *
+     * @param payload the schemas to define
+     * @return the defined schemas
+     */
     @PutMapping
-    public ServiceJsonSchemas defineSchema(@RequestBody @Validated ServiceJsonSchemas payload) {
-        return payload;
+    public ServiceJsonSchemasRepresentation defineSchema(@RequestBody @Validated ServiceJsonSchemasRepresentation payload) {
+        ServiceJsonSchemas entity = persistSchemaUseCase.execute(mapper.toEntity(payload));
+        return mapper.toRepresentation(entity);
     }
 
+    /**
+     * Retrieves the JSON schemas for a specified service.
+     *
+     * <p>Example call using curl:
+     * <pre>{@code
+     * curl -X GET http://localhost:8080/schemas/my-service
+     * }</pre>
+     *
+     * @param serviceName the name of the service
+     * @return the service schemas
+     */
     @GetMapping(path = "/{serviceName}")
-    public ServiceJsonSchemas getServiceSchemas(@PathVariable String serviceName) {
-        return new ServiceJsonSchemas(
-            serviceName,
-            List.of(
-                new JsonSchema(
-                    "ACCOUNT",
-                    """
-                    {
-                      "type": "object",
-                      "properties": {
-                        "accountSetting1": { "type": "boolean" },
-                        "accountSetting2": { "type": "string" }
-                      },
-                      "required": ["accountSetting1"]
-                    }
-                    """
-                )
-
-            ),
-            null
-        );
+    public ServiceJsonSchemasRepresentation getServiceSchemas(@PathVariable String serviceName) {
+        ServiceJsonSchemas entity = this.getServiceSchemasUseCase.execute(serviceName);
+        return mapper.toRepresentation(entity);
     }
 
+    /**
+     * Deletes the JSON schemas for a specified service.
+     *
+     * <p>Example call using curl:
+     * <pre>{@code
+     * curl -X DELETE http://localhost:8080/schemas/my-service
+     * }</pre>
+     *
+     * @param serviceName the name of the service to delete schemas for
+     */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{serviceName}")
     public void deleteServiceSchemas(@PathVariable String serviceName) {
-        // Logic to delete the schemas for the specified service
+        this.deleteSchemaUseCase.execute(serviceName.toLowerCase());
     }
-
 
 }
-
-
-/*
-@Validated
-@RestController
-@RequestMapping(
-    path = ["/industries-settings/configuration-schemas"],
-    produces = [MediaType.APPLICATION_JSON_VALUE]
-)
-class ConfigurationSchemaController(
-    private val configurationService: ConfigurationSchemaService,
-) {
-
-    @PutMapping
-    fun defineConfigurationSchema(
-        @Validated @RequestBody configurationSchemaDto: ConfigurationSchemaDto,
-    ): ConfigurationSchemaDto {
-        return configurationService.defineConfigurationSchema(configurationSchemaDto)
-    }
-
-    @AuditInfo(operation = AuditEventOperation.INDUSTRIES_SETTINGS_READ_CONFIGURATION_SCHEMA)
-    @RequireScopes(RequestScopes.INDUSTRIES_SETTINGS_CONFIGURATION_SCHEMAS_READ)
-    @GetMapping("/{service}")
-    fun getConfigurationSchema(
-        @PathVariable(required = true) @NotBlank service: String,
-    ): ConfigurationSchemaDto {
-        return configurationService.getConfigurationSchemaByService(service)
-    }
-
-    @AuditInfo(operation = AuditEventOperation.INDUSTRIES_SETTINGS_READ_CONFIGURATION_SCHEMA)
-    @RequireScopes(RequestScopes.INDUSTRIES_SETTINGS_CONFIGURATION_SCHEMAS_READ)
-    @GetMapping("/{service}/schemas/{type}")
-    fun getConfigurationSchemaType(
-        @PathVariable(required = true) @NotBlank service: String,
-        @PathVariable(required = true) @Pattern(regexp = "SERVICE|ACCOUNT|RING_GROUP|AGENT|CLIENT") type: String,
-    ): JsonContent {
-        return configurationService.getConfigurationSchemaContentByServiceAndType(service, type)
-    }
-}
- */

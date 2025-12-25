@@ -4,8 +4,9 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.mongo.documents.Se
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.mongo.repositories.ServiceJsonSchemasDocumentRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
-import lombok.val;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public class MongoServiceJsonSchemasRepository implements ServiceJsonSchemasRepository {
@@ -20,5 +21,16 @@ public class MongoServiceJsonSchemasRepository implements ServiceJsonSchemasRepo
     public ServiceJsonSchemas save(ServiceJsonSchemas serviceJsonSchemas) {
         var document = documentRepository.save(ServiceJsonSchemasDocument.from(serviceJsonSchemas));
         return document.toEntity();
+    }
+
+    @Override
+    public void delete(String serviceName) {
+        documentRepository.deleteById(serviceName);
+    }
+
+    @Override
+    public Optional<ServiceJsonSchemas> findByServiceName(String serviceName) {
+        return documentRepository.findById(serviceName.toLowerCase())
+                .map(ServiceJsonSchemasDocument::toEntity);
     }
 }

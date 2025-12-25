@@ -7,14 +7,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @Document("configurationSchemas")
 public record ServiceJsonSchemasDocument(
-        @Id @Indexed(unique = true, name = "CONFIGURATIONS_SCHEMA_UNIQUE_SERVICE_NAME_INDEX")
+        @Id //@Indexed(unique = true, name = "CONFIGURATIONS_SCHEMA_UNIQUE_SERVICE_NAME_INDEX")
         @NotBlank String serviceName,
         @NotEmpty List<@Valid JsonSchema> schemas,
         Rsa rsa

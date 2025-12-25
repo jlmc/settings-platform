@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "Account Configuration Schema",
+  "description": "Configuration schema for Account",
+  "default": {},
+  "properties": {
+    "bank_url": {
+      "$id": "#/properties/bank_url",
+      "type": 123,
+      "format": "uri",
+      "pattern": "^(https?)://",
+      "title": "The bank_url schema",
+      "description": "Link for external core banking system.",
+      "default": ""
+    },
+    "show_cobrowse_button": {
+      "$id": "#/properties/show_cobrowse_button",
+      "type": "boolean",
+      "title": "The show_cobrowse_button schema",
+      "description": "Show Co-Browse Button.",
+      "default": false
+    },
+    "show_videocall_button": {
+      "$id": "#/properties/show_videocall_button",
+      "type": "boolean",
+      "title": "The show_videocall_button schema",
+      "description": "Show Video Call Button.",
+      "default": false
+    },
+    "actions_links": {
+      "$id": "#/properties/actions_links",
+      "type": "array",
+      "title": "The actions_links schema",
+      "description": "List of Action Links.",
+      "default": [],
+      "items": {
+        "$id": "#/properties/actions_links/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/actions_links/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "properties": {
+              "label": {
+                "$id": "#/properties/actions_links/items/anyOf/0/properties/label",
+                "type": "string",
+                "title": "The label schema",
+                "description": "Action Link Label.",
+                "default": ""
+              },
+              "url": {
+                "$id": "#/properties/actions_links/items/anyOf/0/properties/url",
+                "type": "string",
+                "format": "uri",
+                "pattern": "^(https?)://",
+                "title": "The url schema",
+                "description": "Action Link bank_url.",
+                "default": ""
+              }
+            },
+            "required": ["label", "url"]
+          }
+        ]
+      }
+    },
+    "show_account_balance_and_transactions_card": {
+      "$id": "#/properties/show_account_balance_and_transactions_card",
+      "type": "boolean",
+      "title": "The show_account_balance_and_transactions_card schema",
+      "description": "Show AB&T Card.",
+      "default": false
+    },
+    "show_client_details_card": {
+      "$id": "#/properties/show_client_details_card",
+      "type": "boolean",
+      "title": "The show_client_details_card schema",
+      "description": "Show Client Details Card.",
+      "default": false
+    },
+    "show_activities_card": {
+      "$id": "#/properties/show_activities_card",
+      "type": "boolean",
+      "title": "The show_activities_card schema",
+      "description": "Show Activities Card.",
+      "default": false
+    }
+  },
+  "required": [
+    "bank_url",
+    "show_cobrowse_button",
+    "show_videocall_button",
+    "show_account_balance_and_transactions_card",
+    "show_client_details_card",
+    "show_activities_card"
+  ]
+}

@@ -188,6 +188,8 @@ services:
     restart: always
     ports:
       - "27017:27017"
+    volumes:
+      - ./.volumes/mongo/data/mongo1:/data/db
     command: mongod --replSet dataDemos --bind_ip localhost,mongo1
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
@@ -207,6 +209,8 @@ services:
     restart: always
     ports:
       - "27018:27017"
+    volumes:
+      - ./.volumes/mongo/data/mongo2:/data/db
     command: mongod --replSet dataDemos --bind_ip localhost,mongo2
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
@@ -242,9 +246,8 @@ services:
       retries: 3
       start_period: 30s
     volumes:
+      - ./.volumes/mongo/data/mongodb:/data/db
       - ./docker/volumes/mongo/init:/docker-entrypoint-initdb.d
-      #- ./docker/volumes/mongodb/data:/data/db
-      #- ./docker/mongodb:/docker-entrypoint-initdb.d
     command: bash -c "sleep 30 && mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
     #command: bash -c "mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
 
