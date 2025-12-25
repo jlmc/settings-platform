@@ -93,6 +93,7 @@ services:
     container_name: redis
     profiles:
       - dev
+      - full
     ports:
       - "6379:6379"
     healthcheck:
@@ -179,6 +180,9 @@ services:
   mongo1:
     image: mongo:6.0.13
     container_name: mongo1
+    profiles:
+      - full
+      - dev
     networks:
       - infra_network
     restart: always
@@ -197,6 +201,9 @@ services:
     container_name: mongo2
     networks:
       - infra_network
+    profiles:
+      - full
+      - dev
     restart: always
     ports:
       - "27018:27017"
@@ -211,6 +218,9 @@ services:
   mongodb:
     image: mongo:6.0.13
     container_name: mongodb
+    profiles:
+      - full
+      - dev
     networks:
       - infra_network
     depends_on:
@@ -235,8 +245,8 @@ services:
       - ./docker/volumes/mongo/init:/docker-entrypoint-initdb.d
       #- ./docker/volumes/mongodb/data:/data/db
       #- ./docker/mongodb:/docker-entrypoint-initdb.d
-    #command: bash -c "sleep 30 && mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
-    command: bash -c "mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
+    command: bash -c "sleep 30 && mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
+    #command: bash -c "mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
 
   #########################################
   ## Rabbit MQ
