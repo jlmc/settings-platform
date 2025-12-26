@@ -89,7 +89,7 @@ public class ServiceSchemasController {
      */
     @GetMapping(path = "/{serviceName}")
     public ServiceJsonSchemasRepresentation getServiceSchemas(@PathVariable String serviceName) {
-        ServiceJsonSchemas entity = this.getServiceSchemasUseCase.execute(serviceName);
+        ServiceJsonSchemas entity = getServiceSchemasUseCase.execute(serviceName);
         return mapper.toRepresentation(entity);
     }
 
@@ -106,7 +106,7 @@ public class ServiceSchemasController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{serviceName}")
     public void deleteServiceSchemas(@PathVariable String serviceName) {
-        this.deleteSchemaUseCase.execute(serviceName.toLowerCase());
+        deleteSchemaUseCase.execute(serviceName.toLowerCase());
     }
 
 }
