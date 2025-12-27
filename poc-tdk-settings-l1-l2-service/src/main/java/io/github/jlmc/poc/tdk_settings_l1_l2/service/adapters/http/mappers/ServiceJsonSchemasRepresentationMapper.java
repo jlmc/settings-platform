@@ -2,6 +2,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.mappers;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.JsonSchemaRepresentation;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.ServiceJsonSchemasRepresentation;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import org.mapstruct.Mapper;
@@ -22,4 +23,8 @@ public interface ServiceJsonSchemasRepresentationMapper {
 
     @Mapping(target = "schemaType", source = "type")
     JsonSchema toEntity(JsonSchemaRepresentation representation);
+
+    default ConfigurationType mapConfigurationType(String type) {
+        return ConfigurationType.fromString(type);
+    }
 }

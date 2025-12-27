@@ -63,7 +63,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 
-
     @ExceptionHandler(NotFoundException.class)
     ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
 
@@ -123,10 +122,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private String resolveMessage(ObjectError error, Locale locale) {
         MessageSource messageSource = getMessageSource();
+        assert error.getCodes() != null;
         for (String code : error.getCodes()) {
-            var message = messageSource.getMessage(code, error.getArguments(), locale);
-            if (message != null && !message.isBlank() && !message.equals(code)) {
-                return message;
+            try {
+                assert messageSource != null;
+                var message = messageSource.getMessage(code, error.getArguments(), locale);
+                if (!message.isBlank() && !message.equals(code)) {
+                    return message;
+                }
+            } catch (org.springframework.context.NoSuchMessageException ignored) {
+                // Ignore and try next code
             }
         }
         return error.getDefaultMessage();

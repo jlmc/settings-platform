@@ -3,6 +3,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.JsonSchemaRepresentation;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.ServiceJsonSchemasRepresentation;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.mappers.ServiceJsonSchemasRepresentationMapper;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.Rsa;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
@@ -70,7 +71,7 @@ class ServiceSchemasControllerTest {
         JsonSchemaRepresentation schemaRep = new JsonSchemaRepresentation("ACCOUNT", schemaContent);
         ServiceJsonSchemasRepresentation payload = new ServiceJsonSchemasRepresentation("my-service", List.of(schemaRep), new Rsa("key"));
 
-        JsonSchema jsonSchema = new JsonSchema("ACCOUNT", schemaContent);
+        JsonSchema jsonSchema = new JsonSchema(ConfigurationType.ACCOUNT, schemaContent);
         ServiceJsonSchemas entity = new ServiceJsonSchemas("my-service", List.of(jsonSchema), new Rsa("key"));
 
         when(mapper.toEntity(any(ServiceJsonSchemasRepresentation.class))).thenReturn(entity);
@@ -93,7 +94,7 @@ class ServiceSchemasControllerTest {
         JsonSchemaRepresentation schemaRep = new JsonSchemaRepresentation("ACCOUNT", schemaContent);
         ServiceJsonSchemasRepresentation payload = new ServiceJsonSchemasRepresentation("my-service", List.of(schemaRep), new Rsa("key"));
 
-        JsonSchema jsonSchema = new JsonSchema("ACCOUNT", schemaContent);
+        JsonSchema jsonSchema = new JsonSchema(ConfigurationType.ACCOUNT, schemaContent);
         ServiceJsonSchemas entity = new ServiceJsonSchemas("my-service", List.of(jsonSchema), new Rsa("key"));
 
         when(getServiceSchemasUseCase.execute("my-service")).thenReturn(entity);

@@ -1,5 +1,6 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases;
 
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonValidationResult;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.JsonSchemaValidatorErrorException;
@@ -30,7 +31,7 @@ public class PersistSchemaUseCase {
     public ServiceJsonSchemas execute(ServiceJsonSchemas entity) {
         log.info("Persisting service JSON schemas for serviceId={}", entity.serviceName());
 
-        Map<String, List<JsonValidationResult>> invalidSchemas = entity
+        Map<ConfigurationType, List<JsonValidationResult>> invalidSchemas = entity
                 .schemas()
                 .stream()
                 .map(schema -> new Pair<>(schema.schemaType(), jsonSchemaValidator.validate(schema)))

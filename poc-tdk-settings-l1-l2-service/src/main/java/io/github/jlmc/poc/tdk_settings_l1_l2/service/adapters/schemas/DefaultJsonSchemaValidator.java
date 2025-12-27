@@ -3,8 +3,6 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.schemas;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaRegistry;
-import com.networknt.schema.dialect.Dialect;
-import com.networknt.schema.dialect.DialectId;
 import com.networknt.schema.dialect.Dialects;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonValidationError;
