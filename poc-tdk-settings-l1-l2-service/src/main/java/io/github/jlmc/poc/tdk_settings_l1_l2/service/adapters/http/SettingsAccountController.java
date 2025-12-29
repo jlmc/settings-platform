@@ -22,7 +22,7 @@ import tools.jackson.databind.node.ObjectNode;
 
 import java.util.Optional;
 
-import static io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType.valueOf;
+import static io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType.fromString;
 
 @RestController
 @RequestMapping("/settings/{account_id}/{service_name}/{type}")
@@ -51,7 +51,7 @@ public class SettingsAccountController {
             @RequestBody ObjectNode payload) {
 
         SettingsAccount entity = new SettingsAccount(
-                valueOf(type.toUpperCase()),
+                fromString(type.toUpperCase()),
                 accountId,
                 serviceName,
                 payload
@@ -71,7 +71,7 @@ public class SettingsAccountController {
         deleteSettingsAccountUseCase.execute(new Input(
                 accountId,
                 serviceName,
-                valueOf(type.toUpperCase())
+                fromString(type.toUpperCase())
         ));
     }
 
@@ -85,7 +85,7 @@ public class SettingsAccountController {
                 new Input(
                         accountId,
                         serviceName,
-                        valueOf(type.toUpperCase())
+                        fromString(type.toUpperCase())
                 )
         );
 

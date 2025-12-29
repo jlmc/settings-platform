@@ -26,20 +26,13 @@ public class ConfigurationsAccountController {
             @PathVariable("service_name") String serviceName,
             @PathVariable String type) {
 
-        getConfigurationUseCase.execute(
+        Map<String, Object> result = getConfigurationUseCase.execute(
                 accountId,
                 serviceName,
-                ConfigurationType.valueOf(type)
+                ConfigurationType.fromString(type)
         );
-        return ResponseEntity.ok(Map.of(
-                "accountId", accountId,
-                "serviceName", serviceName,
-                "type", type,
-                "config", Map.of(
-                        "key1", "value1",
-                        "key2", "value2"
-                )
-        ));
+
+        return ResponseEntity.ok(result);
 
     }
 }

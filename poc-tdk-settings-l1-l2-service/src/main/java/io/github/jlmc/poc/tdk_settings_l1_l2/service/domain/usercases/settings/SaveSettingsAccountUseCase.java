@@ -3,10 +3,8 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.JsonSchemaValidatorErrorException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.SettingsAccountJsonValidationException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.JsonObjectSchemaValidator;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.JsonSchemaValidator;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
@@ -18,17 +16,17 @@ import java.util.Optional;
 @Service
 public class SaveSettingsAccountUseCase {
 
-    private final SettingsAccountRepository repository;
+    private final SettingsAccountRepository settingsAccountRepository;
     private final ServiceJsonSchemasRepository serviceJsonSchemasRepository;
     private final JsonObjectSchemaValidator validator;
     private final SharedCacheSynchronizer sharedCacheSynchronizer;
 
 
-    public SaveSettingsAccountUseCase(SettingsAccountRepository repository,
+    public SaveSettingsAccountUseCase(SettingsAccountRepository settingsAccountRepository,
                                       ServiceJsonSchemasRepository serviceJsonSchemasRepository,
                                       JsonObjectSchemaValidator validator,
                                       SharedCacheSynchronizer sharedCacheSynchronizer) {
-        this.repository = repository;
+        this.settingsAccountRepository = settingsAccountRepository;
         this.serviceJsonSchemasRepository = serviceJsonSchemasRepository;
         this.validator = validator;
         this.sharedCacheSynchronizer = sharedCacheSynchronizer;
@@ -38,13 +36,12 @@ public class SaveSettingsAccountUseCase {
     public SettingsAccount execute(SettingsAccount entity) {
         validate(entity);
 
-        var persisted = repository.save(entity);
+        var persisted = settingsAccountRepository.save(entity);
 
         sharedCacheSynchronizer.update(persisted);
 
         return persisted;
     }
-
 
     private void validate(SettingsAccount entity) {
         Optional<ServiceJsonSchemas> serviceJsonSchemasOpt = serviceJsonSchemasRepository.findByServiceName(entity.serviceName());

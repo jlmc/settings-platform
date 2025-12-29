@@ -12,7 +12,7 @@ public enum ConfigurationType {
         this.priority = priority;
     }
 
-    public int getPriority() {
+    public int priority() {
         return priority;
     }
 

@@ -18,4 +18,11 @@ public class NoOpSharedCacheSynchronizer implements SharedCacheSynchronizer {
         log.debug("deleting from shared cache SettingsAccount for accountId='{}', type='{}', serviceName='{}' - NO-OP",
                 settingsAccount.accountId(), settingsAccount.type(), settingsAccount.serviceName());
     }
+
+    @Override
+    public void hit(HitData hitData) {
+        log.debug("hit shared cache with {} SettingsAccounts and mergedSettings of size {} - NO-OP",
+                hitData.settingsAccounts().size(),
+                hitData.mergedSettings().size());
+    }
 }

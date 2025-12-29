@@ -16,4 +16,9 @@ public class RedisSharedCacheSynchronizer implements SharedCacheSynchronizer {
     public void delete(SettingsAccount settingsAccount) {
         //TODO: implement Redis delete logic
     }
+
+    @Override
+    public void hit(HitData hitData) {
+
+    }
 }

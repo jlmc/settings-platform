@@ -8,6 +8,7 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccoun
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -57,6 +58,15 @@ public class MongoSettingsAccountRepository implements SettingsAccountRepository
                             settingsAccount.accountId(), settingsAccount.type(), settingsAccount.serviceName());
                     repository.delete(document);
                 });
+    }
+
+    @Override
+    public List<SettingsAccount> findAll(String accountId, String serviceName) {
+        return repository.findByAccountIdAndServiceName(accountId, serviceName)
+                .stream().map(
+                        SettingsAccountDocument::toEntity
+                )
+                .toList();
     }
 
     private Optional<SettingsAccountDocument> findDocument(String accountId, ConfigurationType type, String serviceName) {

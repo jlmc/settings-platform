@@ -20,7 +20,7 @@ import java.util.List;
 @Component
 public class DefaultJsonSchemaValidator implements JsonSchemaValidator, JsonObjectSchemaValidator {
 
-    public static final String SCHEMAS_SCHEMAV_7_JSON = "/schemas/schemav7.json";
+    public static final String SCHEMAS_SCHEMA_V_7_JSON = "/schemas/schemav7.json";
     private final Schema schema;
 
     public DefaultJsonSchemaValidator() {
@@ -28,9 +28,9 @@ public class DefaultJsonSchemaValidator implements JsonSchemaValidator, JsonObje
     }
 
     private Schema loadSchema() {
-        try (InputStream schemaStream = getClass().getResourceAsStream(SCHEMAS_SCHEMAV_7_JSON)) {
+        try (InputStream schemaStream = getClass().getResourceAsStream(SCHEMAS_SCHEMA_V_7_JSON)) {
             if (schemaStream == null) {
-                throw new IllegalStateException("Schema file not found: " + SCHEMAS_SCHEMAV_7_JSON);
+                throw new IllegalStateException("Schema file not found: " + SCHEMAS_SCHEMA_V_7_JSON);
             }
 
             SchemaRegistry schemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft7());

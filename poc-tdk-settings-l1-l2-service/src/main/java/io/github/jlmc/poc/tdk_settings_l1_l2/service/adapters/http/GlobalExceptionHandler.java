@@ -85,7 +85,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(SettingsAccountJsonValidationException.class)
     public ResponseEntity<Object> handleSettingsAccountJsonValidationException(SettingsAccountJsonValidationException ex, WebRequest request) {
-        HttpStatus unprocessableContent = HttpStatus.UNPROCESSABLE_ENTITY;
+        HttpStatus unprocessableContent = HttpStatus.UNPROCESSABLE_CONTENT;
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 unprocessableContent,
                 ex.getMessage()
