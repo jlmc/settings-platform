@@ -6,6 +6,6 @@ public record SettingsAccountRepresentation(
         String type,
         String accountId,
         String serviceName,
-        ObjectNode schemaContent
+        ObjectNode content
 ) {
 }

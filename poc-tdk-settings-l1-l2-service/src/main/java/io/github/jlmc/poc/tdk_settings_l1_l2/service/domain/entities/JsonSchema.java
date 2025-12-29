@@ -12,7 +12,7 @@ public record JsonSchema(
             throw new IllegalArgumentException("schemaType must not be null");
         }
         if (schemaContent == null || schemaContent.isEmpty()) {
-            throw new IllegalArgumentException("schemaContent must not be null or blank");
+            throw new IllegalArgumentException("content must not be null or blank");
         }
     }
 }

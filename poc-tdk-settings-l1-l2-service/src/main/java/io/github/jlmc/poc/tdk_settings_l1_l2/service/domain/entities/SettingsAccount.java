@@ -6,6 +6,6 @@ public record SettingsAccount(
         ConfigurationType type,
         String accountId,
         String serviceName,
-        ObjectNode schemaContent
+        ObjectNode content
 ) {
 }

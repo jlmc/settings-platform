@@ -70,7 +70,7 @@ public class SettingsAccountDocument {
                 entity.accountId(),
                 entity.serviceName(),
                 null,
-                entity.schemaContent()
+                entity.content()
         );
     }
 
@@ -85,7 +85,7 @@ public class SettingsAccountDocument {
     }
 
     public void updateFromEntity(SettingsAccount entity) {
-        this.content = entity.schemaContent();
+        this.content = entity.content();
     }
 
     @Id

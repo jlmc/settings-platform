@@ -75,7 +75,7 @@ class SettingsAccountControllerTest {
                 .andExpect(jsonPath("$.type").value("ACCOUNT"))
                 .andExpect(jsonPath("$.account_id").value("acc1"))
                 .andExpect(jsonPath("$.service_name").value("srv1"))
-                .andExpect(jsonPath("$.schema_content.foo").value("bar"));
+                .andExpect(jsonPath("$.content.foo").value("bar"));
 
         verify(saveSettingsAccountUseCase).execute(any(SettingsAccount.class));
     }
@@ -103,7 +103,7 @@ class SettingsAccountControllerTest {
                 .andExpect(jsonPath("$.type").value("ACCOUNT"))
                 .andExpect(jsonPath("$.account_id").value("acc1"))
                 .andExpect(jsonPath("$.service_name").value("srv1"))
-                .andExpect(jsonPath("$.schema_content.foo").value("bar"));
+                .andExpect(jsonPath("$.content.foo").value("bar"));
     }
 
     @Test

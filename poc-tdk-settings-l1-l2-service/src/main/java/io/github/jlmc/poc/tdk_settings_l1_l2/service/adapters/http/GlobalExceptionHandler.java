@@ -3,6 +3,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.ValidationError;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.JsonSchemaValidatorErrorException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.SettingsAccountJsonValidationException;
 import jakarta.validation.ConstraintViolationException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSource;
@@ -78,6 +79,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 problemDetail,
                 new HttpHeaders(),
                 notFound,
+                request
+        );
+    }
+
+    @ExceptionHandler(SettingsAccountJsonValidationException.class)
+    public ResponseEntity<Object> handleSettingsAccountJsonValidationException(SettingsAccountJsonValidationException ex, WebRequest request) {
+        HttpStatus unprocessableContent = HttpStatus.UNPROCESSABLE_ENTITY;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                unprocessableContent,
+                ex.getMessage()
+        );
+
+        problemDetail.setProperty("errors", ex.getErrors());
+
+        return super.handleExceptionInternal(
+                ex,
+                problemDetail,
+                new HttpHeaders(),
+                unprocessableContent,
                 request
         );
     }

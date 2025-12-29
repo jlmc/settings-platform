@@ -32,7 +32,7 @@ class SettingsAccountRepresentationMapperTest {
         assertEquals("ACCOUNT", result.type());
         assertEquals("account-123", result.accountId());
         assertEquals("service-abc", result.serviceName());
-        assertEquals(schemaContent, result.schemaContent());
+        assertEquals(schemaContent, result.content());
     }
 
     @Test

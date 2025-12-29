@@ -57,7 +57,7 @@ public class DefaultJsonSchemaValidator implements JsonSchemaValidator, JsonObje
     public JsonValidationResult validate(SettingsAccount settingsAccount, JsonSchema jsonSchema) {
         SchemaRegistry schemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft7());
         Schema schema = schemaRegistry.getSchema(jsonSchema.schemaContent());
-        List<Error> errors = schema.validate(settingsAccount.schemaContent());
+        List<Error> errors = schema.validate(settingsAccount.content());
 
         return getJsonValidationResult(errors);
     }
