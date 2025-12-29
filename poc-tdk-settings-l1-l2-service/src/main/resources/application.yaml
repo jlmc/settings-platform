@@ -27,13 +27,26 @@ spring:
 
 
   #  MongoDB configuration
+  mongodb:
+    uri: mongodb://me:me@localhost:27017,localhost:27018/demos-db?replicaSet=dataDemos&authSource=demos-db
+    #uri: mongodb://mongo1:27017,mongo2:27017/yourdb?replicaSet=dataDemos
+
   data:
     mongodb:
       auto-index-creation: true
       field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
-  mongodb:
-    uri: mongodb://me:me@localhost:27017,localhost:27018/demos-db?replicaSet=dataDemos&authSource=demos-db
-    #uri: mongodb://mongo1:27017,mongo2:27017/yourdb?replicaSet=dataDemos
+    redis:
+      host: x-local-domain
+      port: 6379
+      password: "YOUR_STRONG_PASSWORD"
+      database: 0
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 5s
 
 
 # Enable health liveness and readiness
