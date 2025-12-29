@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases;
+package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.schemas;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;

@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.mongo;
+package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.mongo.configurations;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,8 @@ import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.mapping.event.ValidatingEntityCallback;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 
@@ -18,6 +20,32 @@ import java.util.List;
 @Log4j2
 @Configuration
 public class MongoConfiguration {
+
+    /// Creates and registers a [ValidatingEntityCallback] bean to trigger
+    /// Bean Validation on MongoDB entities.
+    ///
+    /// This implementation intentionally uses [ValidatingEntityCallback]
+    /// instead of `org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener` because
+    /// `ValidatingMongoEventListener` has been deprecated in recent
+    /// Spring Data MongoDB versions.
+    ///
+    ///
+    /// [ValidatingEntityCallback] is the recommended replacement and
+    /// integrates with Spring Data's entity callback infrastructure, ensuring
+    /// that [jakarta.validation] (or [javax.validation]) constraints
+    /// are applied during entity lifecycle events such as save and update.
+    ///
+    ///
+    /// @param factory the [LocalValidatorFactoryBean] used to perform
+    ///                Bean Validation
+    /// @return a [ValidatingEntityCallback] configured with the provided
+    ///         validator factory
+    @Bean
+    public ValidatingEntityCallback validatingEntityCallback(
+            LocalValidatorFactoryBean factory
+    ) {
+        return new ValidatingEntityCallback(factory);
+    }
 
 
     @Bean

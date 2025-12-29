@@ -25,13 +25,16 @@ spring:
       # this only works when we don't have any static resource for example some web site
       add-mappings: false
 
+
   #  MongoDB configuration
   data:
     mongodb:
       auto-index-creation: true
       field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
   mongodb:
-    uri: mongodb://me:me@localhost:27017/demos-db?authSource=demos-db
+    uri: mongodb://me:me@localhost:27017,localhost:27018/demos-db?replicaSet=dataDemos&authSource=demos-db
+    #uri: mongodb://mongo1:27017,mongo2:27017/yourdb?replicaSet=dataDemos
+
 
 # Enable health liveness and readiness
 management:
@@ -48,3 +51,19 @@ server:
   #max-http-header-size: 20480
   max-http-request-header-size: 40KB
 
+
+logging:
+  level:
+    io.github.jlmc: TRACE
+    # Spring Data MongoDB (repository + template)
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.mongodb.repository.query: DEBUG
+    org.springframework.data.mongodb.core.convert: DEBUG
+
+    # MongoDB Java driver (queries, connections, transactions)
+    org.mongodb.driver.protocol.command: DEBUG
+    org.mongodb.driver.protocol.connection: INFO
+    org.mongodb.driver.protocol.cluster: INFO
+    org.mongodb.driver.command: DEBUG
+    org.mongodb.driver.connection: INFO
+    org.mongodb.driver.cluster: INFO

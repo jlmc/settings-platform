@@ -3,6 +3,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.ValidationError;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.JsonSchemaValidatorErrorException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
@@ -153,6 +154,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 error.getObjectName(),
                 codes,
                 message
+        );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(
+            ConstraintViolationException ex,
+            WebRequest request
+    ) {
+        HttpStatus unprocessableContent = HttpStatus.UNPROCESSABLE_CONTENT;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                unprocessableContent,
+                ex.getMessage()
+        );
+
+        return super.handleExceptionInternal(
+                ex,
+                problemDetail,
+                new HttpHeaders(),
+                unprocessableContent,
+                request
         );
     }
 
