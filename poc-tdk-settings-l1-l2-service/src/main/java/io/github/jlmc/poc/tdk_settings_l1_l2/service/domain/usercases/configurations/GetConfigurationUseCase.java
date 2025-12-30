@@ -45,12 +45,18 @@ public class GetConfigurationUseCase {
 
     public Map<String, Object> execute(Input input) {
         List<SettingsAccount> settings = fetchSettings(input);
+        List<Supplier<ObjectNode>> suppliers = asSupplier(settings);
+        Map<String, Object> configurations = objectNodeMerger.mergeContentsAsMap(suppliers);
 
         List<SettingsAccount> decryptedSettings = decryptSettingsAccounts(input, settings);
-        Map<String, Object> result = objectNodeMerger.mergeContentsAsMap(asSupplier(decryptedSettings));
 
+        Map<String, Object> result;
+        if (decryptedSettings != settings) {
+            result = objectNodeMerger.mergeContentsAsMap(asSupplier(decryptedSettings));
+        } else {
+            result = configurations;
+        }
 
-        Map<String, Object> configurations = objectNodeMerger.mergeContentsAsMap(asSupplier(settings));
         sharedCacheSynchronizer.hit(new SharedCacheSynchronizer.HitData(
                 input.accountId(),
                 input.serviceName(),
