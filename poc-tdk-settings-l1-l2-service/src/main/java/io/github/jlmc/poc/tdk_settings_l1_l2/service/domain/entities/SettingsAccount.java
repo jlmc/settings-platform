@@ -36,4 +36,13 @@ public record SettingsAccount(
                 contentValue
         );
     }
+
+    public SettingsAccount copy() {
+        return new SettingsAccount(
+                this.type,
+                this.accountId,
+                this.serviceName,
+                this.content.deepCopy()
+        );
+    }
 }

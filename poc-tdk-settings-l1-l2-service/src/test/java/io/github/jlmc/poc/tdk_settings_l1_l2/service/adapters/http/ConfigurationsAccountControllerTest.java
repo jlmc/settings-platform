@@ -2,6 +2,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.GetConfigurationUseCase;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.Input;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -11,9 +12,11 @@ import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType.ACCOUNT;
+import static io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType.AGENT;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -30,17 +33,9 @@ public class ConfigurationsAccountControllerTest {
 
     @Test
     void when_configurations_exists_it_returns_200() throws Exception {
-        when(getConfigurationUseCase.execute(
-                "account-123",
-                "service-abc",
-                ACCOUNT
-        )).thenReturn(
-                new LinkedHashMap<>() {
-                    {
-                        put("key1", "value1");
-                        put("key2", 1234);
-                    }
-                }
+        Input expectedInput = new Input("account-123", "service-abc", ACCOUNT, null);
+        when(getConfigurationUseCase.execute(expectedInput)).thenReturn(
+                Map.of("key1", "value1", "key2", 1234)
         );
 
         mockMvc.perform(get("/configurations/{account_id}/{service_name}/{type}",
@@ -61,12 +56,47 @@ public class ConfigurationsAccountControllerTest {
     }
 
     @Test
+    void when_configurations_exists_with_private_key_it_returns_200() throws Exception {
+        Input expectedInput = new Input("account-123", "service-abc", ACCOUNT, "my-private-key");
+        when(getConfigurationUseCase.execute(expectedInput)).thenReturn(
+                Map.of("key1", "decrypted-value")
+        );
+
+        mockMvc.perform(get("/configurations/{account_id}/{service_name}/{type}",
+                        "account-123",
+                        "service-abc",
+                        "ACCOUNT")
+                        .header("X-Private-Key", "my-private-key")
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpectAll(
+                        status().isOk(),
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        content().json("""
+                                        {"key1":"decrypted-value"}
+                                        """,
+                                JsonCompareMode.STRICT)
+                );
+    }
+
+    @Test
+    void when_requesting_different_type_it_passes_correct_type_to_use_case() throws Exception {
+        Input expectedInput = new Input("account-123", "service-abc", AGENT, null);
+        when(getConfigurationUseCase.execute(expectedInput)).thenReturn(Map.of("type", "AGENT"));
+
+        mockMvc.perform(get("/configurations/{account_id}/{service_name}/{type}",
+                        "account-123",
+                        "service-abc",
+                        "AGENT")
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"type\":\"AGENT\"}"));
+    }
+
+    @Test
     void when_configurations_not_exists_it_returns_404() throws Exception {
-        when(getConfigurationUseCase.execute(
-                "account-123",
-                "service-abc",
-                ACCOUNT
-        )).thenThrow(new NotFoundException("Configuration not found"));
+        when(getConfigurationUseCase.execute(any(Input.class)))
+                .thenThrow(new NotFoundException("Configuration not found"));
 
         mockMvc.perform(get("/configurations/{account_id}/{service_name}/{type}",
                         "account-123",
