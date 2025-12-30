@@ -5,12 +5,12 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.Rsa;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ObjectNodeMerger;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountDecrypter;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 
@@ -48,7 +49,7 @@ class GetConfigurationUseCaseTest {
     @Mock
     private SettingsAccountRepository settingsAccountRepository;
     @Mock
-    private SharedCacheSynchronizer sharedCacheSynchronizer;
+    private ApplicationEventPublisher eventPublisher;
     @Mock
     private ObjectNodeMerger objectNodeMerger;
     @Mock
@@ -73,7 +74,7 @@ class GetConfigurationUseCaseTest {
 
             assertThrows(NotFoundException.class, () -> victim.execute(input));
 
-            verifyNoInteractions(sharedCacheSynchronizer, objectNodeMerger, serviceJsonSchemasRepository, settingsAccountDecrypter);
+            verifyNoInteractions(eventPublisher, objectNodeMerger, serviceJsonSchemasRepository, settingsAccountDecrypter);
         }
 
         @Test
@@ -100,7 +101,7 @@ class GetConfigurationUseCaseTest {
 
             assertEquals("value", result.get("key"));
             verifyNoInteractions(serviceJsonSchemasRepository, settingsAccountDecrypter);
-            verify(sharedCacheSynchronizer).hit(any());
+            verify(eventPublisher).publishEvent(any(ConfigurationHitEvent.class));
         }
 
         @Test
@@ -118,7 +119,7 @@ class GetConfigurationUseCaseTest {
 
             assertEquals("value", result.get("key"));
             verifyNoInteractions(settingsAccountDecrypter);
-            verify(sharedCacheSynchronizer).hit(any());
+            verify(eventPublisher).publishEvent(any(ConfigurationHitEvent.class));
         }
 
         @Test
@@ -146,7 +147,7 @@ class GetConfigurationUseCaseTest {
 
             assertEquals("decrypted", result.get("key"));
             verify(settingsAccountDecrypter).decryptConfigurationJsons(any(), eq(schemas), eq(PRIVATE_KEY));
-            verify(sharedCacheSynchronizer).hit(any());
+            verify(eventPublisher).publishEvent(any(ConfigurationHitEvent.class));
         }
     }
 
@@ -192,10 +193,10 @@ class GetConfigurationUseCaseTest {
 
             victim.execute(input);
 
-            ArgumentCaptor<SharedCacheSynchronizer.HitData> captor = ArgumentCaptor.forClass(SharedCacheSynchronizer.HitData.class);
-            verify(sharedCacheSynchronizer).hit(captor.capture());
+            ArgumentCaptor<ConfigurationHitEvent> captor = ArgumentCaptor.forClass(ConfigurationHitEvent.class);
+            verify(eventPublisher).publishEvent(captor.capture());
 
-            SharedCacheSynchronizer.HitData hitData = captor.getValue();
+            ConfigurationHitEvent hitData = captor.getValue();
             assertEquals(ACCOUNT_ID, hitData.accountId());
             assertEquals(SERVICE_NAME, hitData.serviceName());
             assertEquals(ConfigurationType.ACCOUNT, hitData.configurationType());

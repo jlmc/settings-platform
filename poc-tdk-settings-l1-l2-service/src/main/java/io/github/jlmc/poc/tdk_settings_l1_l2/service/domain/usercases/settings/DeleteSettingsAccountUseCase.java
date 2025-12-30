@@ -1,8 +1,9 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountDeletedEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeleteSettingsAccountUseCase {
 
     private final SettingsAccountRepository repository;
-    private final SharedCacheSynchronizer sharedCacheSynchronizer;
+    private final ApplicationEventPublisher eventPublisher;
 
     public DeleteSettingsAccountUseCase(SettingsAccountRepository repository,
-                                        SharedCacheSynchronizer sharedCacheSynchronizer) {
+                                        ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
-        this.sharedCacheSynchronizer = sharedCacheSynchronizer;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -24,7 +25,7 @@ public class DeleteSettingsAccountUseCase {
 
         if (settingsAccount != null) {
             repository.delete(settingsAccount);
-            sharedCacheSynchronizer.delete(settingsAccount);
+            eventPublisher.publishEvent(new SettingsAccountDeletedEvent(settingsAccount));
         }
     }
 }

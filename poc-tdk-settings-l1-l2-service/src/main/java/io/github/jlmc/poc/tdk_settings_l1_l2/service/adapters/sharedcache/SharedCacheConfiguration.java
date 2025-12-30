@@ -2,7 +2,6 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.noop.NoOpSharedCacheSynchronizer;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.redis.RedisSharedCacheSynchronizer;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

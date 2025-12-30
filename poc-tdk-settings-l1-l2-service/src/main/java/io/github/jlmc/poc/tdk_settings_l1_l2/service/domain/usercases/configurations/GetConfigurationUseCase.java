@@ -2,13 +2,14 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configura
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ObjectNodeMerger;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountDecrypter;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.node.ObjectNode;
 
@@ -22,18 +23,18 @@ import java.util.function.Supplier;
 public class GetConfigurationUseCase {
 
     private final SettingsAccountRepository settingsAccountRepository;
-    private final SharedCacheSynchronizer sharedCacheSynchronizer;
+    private final ApplicationEventPublisher eventPublisher;
     private final ObjectNodeMerger objectNodeMerger;
     private final ServiceJsonSchemasRepository serviceJsonSchemasRepository;
     private final SettingsAccountDecrypter settingsAccountDecrypter;
 
     public GetConfigurationUseCase(SettingsAccountRepository settingsAccountRepository,
-                                   SharedCacheSynchronizer sharedCacheSynchronizer,
+                                   ApplicationEventPublisher eventPublisher,
                                    ObjectNodeMerger objectNodeMerger,
                                    ServiceJsonSchemasRepository serviceJsonSchemasRepository,
                                    SettingsAccountDecrypter settingsAccountDecrypter) {
         this.settingsAccountRepository = settingsAccountRepository;
-        this.sharedCacheSynchronizer = sharedCacheSynchronizer;
+        this.eventPublisher = eventPublisher;
         this.objectNodeMerger = objectNodeMerger;
         this.serviceJsonSchemasRepository = serviceJsonSchemasRepository;
         this.settingsAccountDecrypter = settingsAccountDecrypter;
@@ -57,7 +58,7 @@ public class GetConfigurationUseCase {
             result = configurations;
         }
 
-        sharedCacheSynchronizer.hit(new SharedCacheSynchronizer.HitData(
+        eventPublisher.publishEvent(new ConfigurationHitEvent(
                 input.accountId(),
                 input.serviceName(),
                 input.configurationType(),

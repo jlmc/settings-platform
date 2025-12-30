@@ -1,8 +1,11 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.redis;
 
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.SharedCacheSynchronizer;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountDeletedEvent;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountUpdatedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,7 +32,8 @@ public class RedisSharedCacheSynchronizer implements SharedCacheSynchronizer {
     }
 
     @Override
-    public void update(SettingsAccount settingsAccount) {
+    public void update(SettingsAccountUpdatedEvent event) {
+        SettingsAccount settingsAccount = event.settingsAccount();
         log.debug("Updating shared cache for accountId='{}', type='{}', serviceName='{}' - REDIS",
                 settingsAccount.accountId(), settingsAccount.type(), settingsAccount.serviceName());
 
@@ -40,7 +44,9 @@ public class RedisSharedCacheSynchronizer implements SharedCacheSynchronizer {
     }
 
     @Override
-    public void delete(SettingsAccount settingsAccount) {
+    public void delete(SettingsAccountDeletedEvent event) {
+        SettingsAccount settingsAccount = event.settingsAccount();
+
         log.debug("Deleting shared cache for accountId='{}', type='{}', serviceName='{}' - REDIS",
                 settingsAccount.accountId(), settingsAccount.type(), settingsAccount.serviceName());
 
@@ -51,9 +57,9 @@ public class RedisSharedCacheSynchronizer implements SharedCacheSynchronizer {
     }
 
     @Override
-    public void hit(HitData hitData) {
+    public void hit(ConfigurationHitEvent event) {
         redisTemplate.opsForValue()
-                .set(key(hitData.accountId(), hitData.serviceName(), hitData.configurationType()), hitData, ttl);
+                .set(key(event.accountId(), event.serviceName(), event.configurationType()), event, ttl);
     }
 
     private DeleteKeysResult deleteKeysByPattern(String pattern) {

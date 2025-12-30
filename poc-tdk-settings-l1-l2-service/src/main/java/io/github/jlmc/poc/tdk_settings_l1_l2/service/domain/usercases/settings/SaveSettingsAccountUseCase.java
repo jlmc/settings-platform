@@ -3,11 +3,12 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountUpdatedEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.SettingsAccountJsonValidationException;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.JsonObjectSchemaValidator;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +20,17 @@ public class SaveSettingsAccountUseCase {
     private final SettingsAccountRepository settingsAccountRepository;
     private final ServiceJsonSchemasRepository serviceJsonSchemasRepository;
     private final JsonObjectSchemaValidator validator;
-    private final SharedCacheSynchronizer sharedCacheSynchronizer;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     public SaveSettingsAccountUseCase(SettingsAccountRepository settingsAccountRepository,
                                       ServiceJsonSchemasRepository serviceJsonSchemasRepository,
                                       JsonObjectSchemaValidator validator,
-                                      SharedCacheSynchronizer sharedCacheSynchronizer) {
+                                      ApplicationEventPublisher eventPublisher) {
         this.settingsAccountRepository = settingsAccountRepository;
         this.serviceJsonSchemasRepository = serviceJsonSchemasRepository;
         this.validator = validator;
-        this.sharedCacheSynchronizer = sharedCacheSynchronizer;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -38,7 +39,7 @@ public class SaveSettingsAccountUseCase {
 
         var persisted = settingsAccountRepository.save(entity);
 
-        sharedCacheSynchronizer.update(persisted);
+        eventPublisher.publishEvent(new SettingsAccountUpdatedEvent(persisted));
 
         return persisted;
     }
