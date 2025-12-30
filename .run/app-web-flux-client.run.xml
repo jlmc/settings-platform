@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="App-web-flux-client" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <module name="poc-tdk-l1-l2-app-web-flux" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.PocTdkSettingsL1L2AppWebFluxApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

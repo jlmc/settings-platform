@@ -1,5 +1,7 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain;
+package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services;
 
+import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.Patient;
+import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories.PatientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +18,8 @@ public class PatientSync implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        List<Patient> list = IntStream.of(1, 5)
+    public void run(String... args) {
+        List<Patient> list = IntStream.rangeClosed(1, 5)
                 .mapToObj(index -> new Patient(
                         "" + index,
                         "1",
