@@ -27,6 +27,7 @@
         <!-- <module>settings-l1</module> -->
         <!-- <module>settings-l2</module> -->
         <module>poc-tdk-settings-l1-l2-service</module>
+        <module>poc-tdk-l1-l2-app-web-flux</module>
     </modules>
 
     <!-- Centralized dependency versions -->
