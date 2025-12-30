@@ -4,9 +4,9 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.Settings
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.mappers.SettingsAccountRepresentationMapper;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.SettingsInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.DeleteSettingsAccountUseCase;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.GetSettingsAccountUseCase;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.Input;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.SaveSettingsAccountUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +68,7 @@ public class SettingsAccountController {
             @PathVariable("service_name") String serviceName,
             @PathVariable String type) {
 
-        deleteSettingsAccountUseCase.execute(new Input(
+        deleteSettingsAccountUseCase.execute(new SettingsInput(
                 accountId,
                 serviceName,
                 fromString(type.toUpperCase())
@@ -82,7 +82,7 @@ public class SettingsAccountController {
             @PathVariable String type) {
 
         Optional<SettingsAccount> result = getSettingsAccountUseCase.execute(
-                new Input(
+                new SettingsInput(
                         accountId,
                         serviceName,
                         fromString(type.toUpperCase())
