@@ -44,7 +44,7 @@ public class GetConfigurationUseCase {
     }
 
     public Map<String, Object> execute(Input input) {
-        List<SettingsAccount> settings = getAllSettings(input);
+        List<SettingsAccount> settings = fetchSettings(input);
 
         List<SettingsAccount> decryptedSettings = decryptSettingsAccounts(input, settings);
         Map<String, Object> result = objectNodeMerger.mergeContentsAsMap(asSupplier(decryptedSettings));
@@ -62,21 +62,22 @@ public class GetConfigurationUseCase {
         return result;
     }
 
-    private List<SettingsAccount> getAllSettings(Input input) {
+    private List<SettingsAccount> fetchSettings(Input input) {
         List<SettingsAccount> settings = settingsAccountRepository.findAll(input.accountId(), input.serviceName());
 
-        if (settings.isEmpty()) {
+        List<SettingsAccount> filteredSettings = settings.stream()
+                .filter(SettingsAccount.settingsAccountWithinPriorityThreshold(input.configurationType()))
+                .sorted(SettingsAccount.BY_PRIORITY)
+                .toList();
+
+        if (filteredSettings.isEmpty()) {
             throw new NotFoundException(
                     "No Configurations found for accountId=%s, serviceName=%s, configurationType=%s"
                             .formatted(input.accountId(), input.serviceName(), input.configurationType())
             );
         }
 
-        return settings.stream()
-                .filter(SettingsAccount.settingsAccountWithinPriorityThreshold(input.configurationType()))
-                .sorted(SettingsAccount.BY_PRIORITY)
-                //.map(account -> (Supplier<ObjectNode>) account)
-                .toList();
+        return filteredSettings;
     }
 
     private List<SettingsAccount> decryptSettingsAccounts(Input input, List<SettingsAccount> settings) {
