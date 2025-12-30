@@ -3,10 +3,12 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.noop.NoOpSharedCacheSynchronizer;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.redis.RedisSharedCacheSynchronizer;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SharedCacheSynchronizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
@@ -17,20 +19,29 @@ import tools.jackson.databind.ObjectMapper;
 @EnableConfigurationProperties(SharedCacheConfigurationProperties.class)
 public class SharedCacheConfiguration {
 
+    @Autowired
+    Environment environment;
+
     @Bean
-    @ConditionalOnProperty(name = "sharedcache.type", havingValue = "NOOP", matchIfMissing = true)
-    public SharedCacheSynchronizer noOpSharedCacheSynchronizer() {
+    @ConditionalOnProperty(name = "tdk.shared-cache.type", havingValue = "NOOP", matchIfMissing = true)
+    public SharedCacheSynchronizer noOpSharedCacheSynchronizer(SharedCacheConfigurationProperties properties) {
         return new NoOpSharedCacheSynchronizer();
     }
 
     @Bean
-    @ConditionalOnProperty(name = "sharedcache.type", havingValue = "REDIS")
-    public SharedCacheSynchronizer redisSharedCacheSynchronizer(RedisTemplate<String, Object> redisTemplate) {
-        return new RedisSharedCacheSynchronizer(redisTemplate);
+    @ConditionalOnProperty(name = "tdk.shared-cache.type", havingValue = "REDIS")
+    public SharedCacheSynchronizer redisSharedCacheSynchronizer(
+            RedisTemplate<String, Object> redisTemplate,
+            SharedCacheConfigurationProperties properties) {
+        return new RedisSharedCacheSynchronizer(
+                redisTemplate,
+                properties.ttl(),
+                properties.redis().namespace()
+        );
     }
 
     @Bean
-    @ConditionalOnProperty(name = "sharedcache.type", havingValue = "REDIS")
+    @ConditionalOnProperty(name = "tdk.shared-cache.type", havingValue = "REDIS")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();

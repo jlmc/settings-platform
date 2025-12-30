@@ -2,8 +2,8 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -83,12 +83,7 @@ public record SharedCacheConfigurationProperties(
     }
 
     public record Redis(
-            @NotNull String host,
-            @Positive int port
+            @NotBlank @DefaultValue("settings") String namespace
     ) {
-        public Redis {
-            if (host == null) host = "localhost";
-            if (port <= 0) port = 6379;
-        }
     }
 }

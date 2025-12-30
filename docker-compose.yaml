@@ -96,7 +96,7 @@ services:
       - full
     ports:
       - "6379:6379"
-    command: [ "redis-server", "--requirepass", "YOUR_STRONG_PASSWORD" ]
+    command: [ "redis-server", "--requirepass", "YOUR_STRONG_PASSWORD", "--loglevel", "debug" ]
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "YOUR_STRONG_PASSWORD", "ping"]
       interval: 5s

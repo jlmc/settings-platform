@@ -1,3 +1,8 @@
+tdk:
+  shared-cache:
+    type: NOOP
+
+
 spring:
   application:
     name: poc-tdk-settings-l1-l2-service
@@ -80,3 +85,7 @@ logging:
     org.mongodb.driver.command: DEBUG
     org.mongodb.driver.connection: INFO
     org.mongodb.driver.cluster: INFO
+
+    # redis
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG
