@@ -33,8 +33,8 @@ spring:
 
   #  MongoDB configuration
   mongodb:
-    uri: mongodb://me:me@localhost:27017,localhost:27018/demos-db?replicaSet=dataDemos&authSource=demos-db
-    #uri: mongodb://mongo1:27017,mongo2:27017/yourdb?replicaSet=dataDemos
+    uri: mongodb://me:me@localhost:27017,localhost:27018/tdk-settings-db?replicaSet=rs-cluster-example&authSource=admin
+    #uri: mongodb://mongo1:27017,mongo2:27017/yourdb?replicaSet=rs-cluster-example
 
   data:
     mongodb:

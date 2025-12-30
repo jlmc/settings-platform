@@ -191,7 +191,7 @@ services:
       - "27017:27017"
     volumes:
       - ./.volumes/mongo/data/mongo1:/data/db
-    command: mongod --replSet dataDemos --bind_ip localhost,mongo1
+    command: mongod --replSet rs-cluster-example --bind_ip localhost,mongo1
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 5s
@@ -212,7 +212,7 @@ services:
       - "27018:27017"
     volumes:
       - ./.volumes/mongo/data/mongo2:/data/db
-    command: mongod --replSet dataDemos --bind_ip localhost,mongo2
+    command: mongod --replSet rs-cluster-example --bind_ip localhost,mongo2
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 5s
@@ -237,7 +237,7 @@ services:
     healthcheck:
       test: |
         mongosh --host mongo1 --eval "rs.initiate({
-          _id: 'dataDemos',
+          _id: 'rs-cluster-example',
           members: [
             {_id: 0, host: 'mongo1'},
             {_id: 1, host: 'mongo2'}
