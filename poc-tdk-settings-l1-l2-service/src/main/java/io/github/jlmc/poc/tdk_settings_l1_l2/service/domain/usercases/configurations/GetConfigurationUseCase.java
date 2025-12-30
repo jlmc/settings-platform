@@ -45,33 +45,90 @@ public class GetConfigurationUseCase {
     }
 
     public Map<String, Object> execute(Input input) {
-        List<SettingsAccount> maybeEncryptedSettings = fetchSettings(input);
+        List<SettingsAccount> originalSettings = fetchSettings(input);
 
-        List<Supplier<ObjectNode>> suppliers = asSuppliers(maybeEncryptedSettings);
-        Map<String, Object> maybeEncryptedSettingsResults = objectNodeMerger.mergeContentsAsMap(suppliers);
+        ServiceJsonSchemas schemas = loadSchemas(input.serviceName());
 
-        ServiceJsonSchemas serviceJsonSchemas = serviceJsonSchemasRepository.findByServiceName(input.serviceName()).orElse(null);
-        List<SettingsAccount> decryptedSettings = decryptSettingsAccounts(input, maybeEncryptedSettings, serviceJsonSchemas);
+        Map<String, Object> originalMergedConfiguration = mergeSettings(originalSettings);
 
-        Map<String, Object> result;
-        if (decryptedSettings != maybeEncryptedSettings) {
-            result = objectNodeMerger.mergeContentsAsMap(asSuppliers(decryptedSettings));
-        } else {
-            result = maybeEncryptedSettingsResults;
-        }
+        List<SettingsAccount> effectiveSettings = decryptIfNecessary(input, originalSettings, schemas);
 
-        ResolvedConfiguration resolvedConfiguration = new ResolvedConfiguration(
+        Map<String, Object> resolvedConfiguration = mergeSettings(effectiveSettings);
+
+        publishHitEvent(
+                input,
+                schemas,
+                originalSettings,
+                originalMergedConfiguration
+        );
+
+        return resolvedConfiguration;
+    }
+
+    private void publishHitEvent(
+            Input input,
+            ServiceJsonSchemas schemas,
+            List<SettingsAccount> originalSettings,
+            Map<String, Object> resolvedConfiguration) {
+
+        ResolvedConfiguration resolved = new ResolvedConfiguration(
                 input.accountId(),
                 input.serviceName(),
                 input.configurationType(),
-                serviceJsonSchemas,
-                maybeEncryptedSettings,
-                maybeEncryptedSettingsResults
+                schemas,
+                originalSettings,
+                resolvedConfiguration
         );
 
-        eventPublisher.publishEvent(new ConfigurationHitEvent(resolvedConfiguration));
+        eventPublisher.publishEvent(new ConfigurationHitEvent(resolved));
+    }
 
-        return result;
+    private Map<String, Object> mergeSettings(List<SettingsAccount> settings) {
+        return objectNodeMerger.mergeContentsAsMap(asSuppliers(settings));
+    }
+
+    private List<SettingsAccount> decryptIfNecessary(
+            Input input,
+            List<SettingsAccount> settings,
+            ServiceJsonSchemas schemas) {
+
+        if (!input.hasPrivateKey()) {
+            log.debug(
+                    "No private key provided, skipping decryption for account={}, serviceId={}",
+                    input.accountId(),
+                    input.serviceName()
+            );
+            return settings;
+        }
+
+        if (schemas == null) {
+            log.debug(
+                    "No Service JSON schemas found for serviceId={}, skipping decryption",
+                    input.serviceName()
+            );
+            return settings;
+        }
+
+        log.debug(
+                "Decrypting {} configuration(s) for serviceId={}, configurationType={}",
+                settings.size(),
+                input.serviceName(),
+                input.configurationType()
+        );
+
+        List<SettingsAccount> clonedSettings = settings.stream()
+                .map(SettingsAccount::copy)
+                .toList();
+
+        return settingsAccountDecrypter.decryptConfigurationJsons(
+                clonedSettings,
+                schemas,
+                input.privateKey()
+        );
+    }
+
+    private ServiceJsonSchemas loadSchemas(String serviceName) {
+        return serviceJsonSchemasRepository.findByServiceName(serviceName).orElse(null);
     }
 
     private List<SettingsAccount> fetchSettings(Input input) {
@@ -90,26 +147,7 @@ public class GetConfigurationUseCase {
         }
 
         return filteredSettings;
+
+
     }
-
-    private List<SettingsAccount> decryptSettingsAccounts(Input input, List<SettingsAccount> settings, ServiceJsonSchemas serviceJsonSchemas) {
-        String serviceName = input.serviceName();
-
-        if (!input.hasPrivateKey()) {
-            log.debug("No private key provided, skipping decryption for account={}, serviceId={}", input.accountId(), serviceName);
-            return settings;
-        }
-
-        if (serviceJsonSchemas == null) {
-            log.debug("No Service JSON schemas found for serviceId={}, skipping decryption", serviceName);
-            return settings;
-        }
-
-        log.debug("Decrypting configuration JSONs for serviceId={}", serviceName);
-
-        List<SettingsAccount> clonedSettings = settings.stream().map(SettingsAccount::copy).toList();
-
-        return settingsAccountDecrypter.decryptConfigurationJsons(clonedSettings, serviceJsonSchemas, input.privateKey());
-    }
-
 }
