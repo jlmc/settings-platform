@@ -101,7 +101,8 @@ class GetConfigurationUseCaseTest {
             Map<String, Object> result = victim.execute(input);
 
             assertEquals("value", result.get("key"));
-            verifyNoInteractions(serviceJsonSchemasRepository, settingsAccountDecrypter);
+            verify(serviceJsonSchemasRepository, times(1)).findByServiceName(input.serviceName());
+            verifyNoInteractions(settingsAccountDecrypter);
             verify(eventPublisher).publishEvent(any(ConfigurationHitEvent.class));
         }
 

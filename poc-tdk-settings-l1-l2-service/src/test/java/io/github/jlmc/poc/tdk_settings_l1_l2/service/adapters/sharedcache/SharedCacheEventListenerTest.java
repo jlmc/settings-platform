@@ -32,7 +32,11 @@ class SharedCacheEventListenerTest {
     @Test
     void onConfigurationHit() {
         ConfigurationHitEvent event = new ConfigurationHitEvent(
-                new ResolvedConfiguration("acc1", "srv1", ConfigurationType.ACCOUNT, List.of(), Map.of()));
+                new ResolvedConfiguration("acc1", "srv1",
+                        ConfigurationType.ACCOUNT,
+                        null,
+                        List.of(),
+                        Map.of()));
 
         victim.onConfigurationHit(event);
 

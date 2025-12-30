@@ -16,7 +16,6 @@ import tools.jackson.databind.node.ObjectNode;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 @Slf4j
@@ -46,25 +45,28 @@ public class GetConfigurationUseCase {
     }
 
     public Map<String, Object> execute(Input input) {
-        List<SettingsAccount> settings = fetchSettings(input);
-        List<Supplier<ObjectNode>> suppliers = asSuppliers(settings);
-        Map<String, Object> configurations = objectNodeMerger.mergeContentsAsMap(suppliers);
+        List<SettingsAccount> maybeEncryptedSettings = fetchSettings(input);
 
-        List<SettingsAccount> decryptedSettings = decryptSettingsAccounts(input, settings);
+        List<Supplier<ObjectNode>> suppliers = asSuppliers(maybeEncryptedSettings);
+        Map<String, Object> maybeEncryptedSettingsResults = objectNodeMerger.mergeContentsAsMap(suppliers);
+
+        ServiceJsonSchemas serviceJsonSchemas = serviceJsonSchemasRepository.findByServiceName(input.serviceName()).orElse(null);
+        List<SettingsAccount> decryptedSettings = decryptSettingsAccounts(input, maybeEncryptedSettings, serviceJsonSchemas);
 
         Map<String, Object> result;
-        if (decryptedSettings != settings) {
+        if (decryptedSettings != maybeEncryptedSettings) {
             result = objectNodeMerger.mergeContentsAsMap(asSuppliers(decryptedSettings));
         } else {
-            result = configurations;
+            result = maybeEncryptedSettingsResults;
         }
 
         ResolvedConfiguration resolvedConfiguration = new ResolvedConfiguration(
                 input.accountId(),
                 input.serviceName(),
                 input.configurationType(),
-                decryptedSettings,
-                result
+                serviceJsonSchemas,
+                maybeEncryptedSettings,
+                maybeEncryptedSettingsResults
         );
 
         eventPublisher.publishEvent(new ConfigurationHitEvent(resolvedConfiguration));
@@ -90,7 +92,7 @@ public class GetConfigurationUseCase {
         return filteredSettings;
     }
 
-    private List<SettingsAccount> decryptSettingsAccounts(Input input, List<SettingsAccount> settings) {
+    private List<SettingsAccount> decryptSettingsAccounts(Input input, List<SettingsAccount> settings, ServiceJsonSchemas serviceJsonSchemas) {
         String serviceName = input.serviceName();
 
         if (!input.hasPrivateKey()) {
@@ -98,8 +100,7 @@ public class GetConfigurationUseCase {
             return settings;
         }
 
-        Optional<ServiceJsonSchemas> serviceJsonSchemasOpt = serviceJsonSchemasRepository.findByServiceName(serviceName);
-        if (serviceJsonSchemasOpt.isEmpty()) {
+        if (serviceJsonSchemas == null) {
             log.debug("No Service JSON schemas found for serviceId={}, skipping decryption", serviceName);
             return settings;
         }
@@ -108,7 +109,6 @@ public class GetConfigurationUseCase {
 
         List<SettingsAccount> clonedSettings = settings.stream().map(SettingsAccount::copy).toList();
 
-        ServiceJsonSchemas serviceJsonSchemas = serviceJsonSchemasOpt.get();
         return settingsAccountDecrypter.decryptConfigurationJsons(clonedSettings, serviceJsonSchemas, input.privateKey());
     }
 
