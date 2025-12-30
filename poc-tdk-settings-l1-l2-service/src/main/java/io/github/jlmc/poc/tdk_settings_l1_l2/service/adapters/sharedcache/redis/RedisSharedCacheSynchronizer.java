@@ -2,6 +2,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.redis
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.SharedCacheSynchronizer;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountDeletedEvent;
@@ -58,8 +59,10 @@ public class RedisSharedCacheSynchronizer implements SharedCacheSynchronizer {
 
     @Override
     public void hit(ConfigurationHitEvent event) {
+        ResolvedConfiguration resolvedConfiguration = event.resolvedConfiguration();
+
         redisTemplate.opsForValue()
-                .set(key(event.accountId(), event.serviceName(), event.configurationType()), event, ttl);
+                .set(key(resolvedConfiguration.accountId(), resolvedConfiguration.serviceName(), resolvedConfiguration.configurationType()), resolvedConfiguration, ttl);
     }
 
     private DeleteKeysResult deleteKeysByPattern(String pattern) {

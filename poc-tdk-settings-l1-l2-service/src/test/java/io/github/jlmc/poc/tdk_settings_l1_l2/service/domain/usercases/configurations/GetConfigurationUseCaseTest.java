@@ -2,6 +2,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configura
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.JsonSchema;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.Rsa;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
@@ -196,12 +197,12 @@ class GetConfigurationUseCaseTest {
             ArgumentCaptor<ConfigurationHitEvent> captor = ArgumentCaptor.forClass(ConfigurationHitEvent.class);
             verify(eventPublisher).publishEvent(captor.capture());
 
-            ConfigurationHitEvent hitData = captor.getValue();
-            assertEquals(ACCOUNT_ID, hitData.accountId());
-            assertEquals(SERVICE_NAME, hitData.serviceName());
-            assertEquals(ConfigurationType.ACCOUNT, hitData.configurationType());
-            assertEquals(List.of(setting), hitData.settingsAccounts());
-            assertEquals(mergedMap, hitData.mergedSettings());
+            ResolvedConfiguration resolvedConfiguration = captor.getValue().resolvedConfiguration();
+            assertEquals(ACCOUNT_ID, resolvedConfiguration.accountId());
+            assertEquals(SERVICE_NAME, resolvedConfiguration.serviceName());
+            assertEquals(ConfigurationType.ACCOUNT, resolvedConfiguration.configurationType());
+            assertEquals(List.of(setting), resolvedConfiguration.settingsAccounts());
+            assertEquals(mergedMap, resolvedConfiguration.mergedSettings());
         }
     }
 

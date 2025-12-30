@@ -1,6 +1,7 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountDeletedEvent;
@@ -31,7 +32,7 @@ class SharedCacheEventListenerTest {
     @Test
     void onConfigurationHit() {
         ConfigurationHitEvent event = new ConfigurationHitEvent(
-                "acc1", "srv1", ConfigurationType.ACCOUNT, List.of(), Map.of());
+                new ResolvedConfiguration("acc1", "srv1", ConfigurationType.ACCOUNT, List.of(), Map.of()));
 
         victim.onConfigurationHit(event);
 

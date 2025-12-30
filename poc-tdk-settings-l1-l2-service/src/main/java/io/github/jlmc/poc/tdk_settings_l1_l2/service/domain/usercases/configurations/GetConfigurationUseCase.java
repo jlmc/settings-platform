@@ -1,5 +1,6 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations;
 
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
@@ -40,31 +41,33 @@ public class GetConfigurationUseCase {
         this.settingsAccountDecrypter = settingsAccountDecrypter;
     }
 
-    private static List<Supplier<ObjectNode>> asSupplier(List<SettingsAccount> settings) {
+    private static List<Supplier<ObjectNode>> asSuppliers(List<SettingsAccount> settings) {
         return settings.stream().map(account -> (Supplier<ObjectNode>) account).toList();
     }
 
     public Map<String, Object> execute(Input input) {
         List<SettingsAccount> settings = fetchSettings(input);
-        List<Supplier<ObjectNode>> suppliers = asSupplier(settings);
+        List<Supplier<ObjectNode>> suppliers = asSuppliers(settings);
         Map<String, Object> configurations = objectNodeMerger.mergeContentsAsMap(suppliers);
 
         List<SettingsAccount> decryptedSettings = decryptSettingsAccounts(input, settings);
 
         Map<String, Object> result;
         if (decryptedSettings != settings) {
-            result = objectNodeMerger.mergeContentsAsMap(asSupplier(decryptedSettings));
+            result = objectNodeMerger.mergeContentsAsMap(asSuppliers(decryptedSettings));
         } else {
             result = configurations;
         }
 
-        eventPublisher.publishEvent(new ConfigurationHitEvent(
+        ResolvedConfiguration resolvedConfiguration = new ResolvedConfiguration(
                 input.accountId(),
                 input.serviceName(),
                 input.configurationType(),
-                settings,
-                configurations
-        ));
+                decryptedSettings,
+                result
+        );
+
+        eventPublisher.publishEvent(new ConfigurationHitEvent(resolvedConfiguration));
 
         return result;
     }

@@ -1,6 +1,7 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.noop;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.sharedcache.SharedCacheSynchronizer;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountDeletedEvent;
@@ -25,9 +26,11 @@ public class NoOpSharedCacheSynchronizer implements SharedCacheSynchronizer {
     }
 
     @Override
-    public void hit(ConfigurationHitEvent hitData) {
+    public void hit(ConfigurationHitEvent event) {
+        ResolvedConfiguration resolvedConfiguration = event.resolvedConfiguration();
+
         log.debug("hit shared cache with {} SettingsAccounts and mergedSettings of size {} - NO-OP",
-                hitData.settingsAccounts().size(),
-                hitData.mergedSettings().size());
+                resolvedConfiguration.settingsAccounts().size(),
+                resolvedConfiguration.mergedSettings().size());
     }
 }
