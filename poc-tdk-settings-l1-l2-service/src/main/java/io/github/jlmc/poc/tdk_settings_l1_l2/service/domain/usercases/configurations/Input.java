@@ -20,7 +20,7 @@ public record Input(
         );
     }
 
-    boolean hasPrivateKey() {
+    public boolean hasPrivateKey() {
         return this.privateKey != null && !this.privateKey.isBlank();
     }
 }
