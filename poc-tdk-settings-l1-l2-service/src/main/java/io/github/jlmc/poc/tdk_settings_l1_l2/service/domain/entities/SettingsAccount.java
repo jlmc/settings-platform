@@ -27,4 +27,13 @@ public record SettingsAccount(
     public ObjectNode get() {
         return this.content;
     }
+
+    public SettingsAccount copyWithJson(ObjectNode contentValue) {
+        return new SettingsAccount(
+                this.type,
+                this.accountId,
+                this.serviceName,
+                contentValue
+        );
+    }
 }
