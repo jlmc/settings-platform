@@ -2,6 +2,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configura
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.ResolveConfigurationInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.services.ConfigurationDecryptionService;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.services.ConfigurationResolver;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +39,7 @@ class GetConfigurationUseCaseTest {
     @Test
     @DisplayName("Should return merged settings directly when no private key is provided in input")
     void executeReturnsMergedSettingsWhenNoPrivateKey() {
-        Input input = createInput(ConfigurationType.ACCOUNT, null);
+        ResolveConfigurationInput input = createInput(ConfigurationType.ACCOUNT, null);
         Map<String, Object> mergedSettings = Map.of("key", "value");
         ResolvedConfiguration resolved = new ResolvedConfiguration(
                 ACCOUNT_ID, SERVICE_NAME, ConfigurationType.ACCOUNT, null, List.of(), mergedSettings
@@ -56,7 +57,7 @@ class GetConfigurationUseCaseTest {
     @Test
     @DisplayName("Should return decrypted settings when private key is provided in input")
     void executeReturnsDecryptedSettingsWhenPrivateKeyIsProvided() {
-        Input input = createInput(ConfigurationType.ACCOUNT, PRIVATE_KEY);
+        ResolveConfigurationInput input = createInput(ConfigurationType.ACCOUNT, PRIVATE_KEY);
         Map<String, Object> mergedSettings = Map.of("key", "encrypted");
         ResolvedConfiguration resolved = new ResolvedConfiguration(
                 ACCOUNT_ID, SERVICE_NAME, ConfigurationType.ACCOUNT, null, List.of(), mergedSettings
@@ -73,7 +74,7 @@ class GetConfigurationUseCaseTest {
         verify(configurationDecryptionService).decryptForReturn(input, resolved);
     }
 
-    private Input createInput(ConfigurationType type, String privateKey) {
-        return new Input(ACCOUNT_ID, SERVICE_NAME, type, privateKey);
+    private ResolveConfigurationInput createInput(ConfigurationType type, String privateKey) {
+        return new ResolveConfigurationInput(ACCOUNT_ID, SERVICE_NAME, type, privateKey);
     }
 }

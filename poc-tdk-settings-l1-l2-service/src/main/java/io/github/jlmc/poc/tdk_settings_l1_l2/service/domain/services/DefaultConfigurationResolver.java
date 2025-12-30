@@ -5,10 +5,10 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJson
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.ResolveConfigurationInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ObjectNodeMerger;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.Input;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public class DefaultConfigurationResolver implements ConfigurationResolver {
     }
 
     @Override
-    public ResolvedConfiguration resolve(Input input) {
+    public ResolvedConfiguration resolve(ResolveConfigurationInput input) {
         List<SettingsAccount> originalSettings = fetchSettings(input);
         ServiceJsonSchemas schemas = loadSchemas(input.serviceName());
         Map<String, Object> originalMergedConfiguration = mergeSettings(originalSettings);
@@ -61,7 +61,7 @@ public class DefaultConfigurationResolver implements ConfigurationResolver {
         eventPublisher.publishEvent(new ConfigurationHitEvent(resolved));
     }
 
-    private List<SettingsAccount> fetchSettings(Input input) {
+    private List<SettingsAccount> fetchSettings(ResolveConfigurationInput input) {
         List<SettingsAccount> settings = settingsAccountRepository.findAll(input.accountId(), input.serviceName());
 
         List<SettingsAccount> filteredSettings = settings.stream()

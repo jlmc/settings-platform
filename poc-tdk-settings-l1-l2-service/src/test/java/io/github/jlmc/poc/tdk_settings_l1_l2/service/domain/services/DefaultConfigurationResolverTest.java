@@ -6,10 +6,10 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJson
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.ConfigurationHitEvent;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.exceptions.NotFoundException;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.ResolveConfigurationInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ObjectNodeMerger;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ServiceJsonSchemasRepository;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.Input;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class DefaultConfigurationResolverTest {
         @Test
         @DisplayName("Should resolve configuration successfully when settings and schemas exist")
         void resolveSuccessfully() {
-            Input input = new Input(accountId, serviceName, type, null);
+            ResolveConfigurationInput input = new ResolveConfigurationInput(accountId, serviceName, type, null);
             SettingsAccount accountSettings = new SettingsAccount(ConfigurationType.ACCOUNT, accountId, serviceName, JsonNodeFactory.instance.objectNode());
             SettingsAccount userSettings = new SettingsAccount(ConfigurationType.USER, accountId, serviceName, JsonNodeFactory.instance.objectNode());
             List<SettingsAccount> allSettings = List.of(accountSettings, userSettings);
@@ -89,7 +89,7 @@ class DefaultConfigurationResolverTest {
         @Test
         @DisplayName("Should resolve configuration without schemas when they are not found")
         void resolveWithoutSchemas() {
-            Input input = new Input(accountId, serviceName, type, null);
+            ResolveConfigurationInput input = new ResolveConfigurationInput(accountId, serviceName, type, null);
             SettingsAccount settings = new SettingsAccount(ConfigurationType.ACCOUNT, accountId, serviceName, JsonNodeFactory.instance.objectNode());
             
             when(settingsAccountRepository.findAll(accountId, serviceName)).thenReturn(List.of(settings));
@@ -105,7 +105,7 @@ class DefaultConfigurationResolverTest {
         @Test
         @DisplayName("Should throw NotFoundException when no settings are found")
         void throwNotFoundExceptionWhenNoSettings() {
-            Input input = new Input(accountId, serviceName, type, null);
+            ResolveConfigurationInput input = new ResolveConfigurationInput(accountId, serviceName, type, null);
             when(settingsAccountRepository.findAll(accountId, serviceName)).thenReturn(Collections.emptyList());
 
             assertThrows(NotFoundException.class, () -> sut.resolve(input));
@@ -115,7 +115,7 @@ class DefaultConfigurationResolverTest {
         @Test
         @DisplayName("Should throw NotFoundException when no settings match priority threshold")
         void throwNotFoundExceptionWhenNoSettingsMatchPriority() {
-            Input input = new Input(accountId, serviceName, ConfigurationType.SERVICE, null);
+            ResolveConfigurationInput input = new ResolveConfigurationInput(accountId, serviceName, ConfigurationType.SERVICE, null);
             SettingsAccount accountSettings = new SettingsAccount(ConfigurationType.ACCOUNT, accountId, serviceName, JsonNodeFactory.instance.objectNode());
             
             when(settingsAccountRepository.findAll(accountId, serviceName)).thenReturn(List.of(accountSettings));
@@ -126,7 +126,7 @@ class DefaultConfigurationResolverTest {
         @Test
         @DisplayName("Should filter and sort settings by priority")
         void filterAndSortSettings() {
-            Input input = new Input(accountId, serviceName, ConfigurationType.AGENT, null);
+            ResolveConfigurationInput input = new ResolveConfigurationInput(accountId, serviceName, ConfigurationType.AGENT, null);
             SettingsAccount serviceSettings = new SettingsAccount(ConfigurationType.SERVICE, accountId, serviceName, JsonNodeFactory.instance.objectNode().put("p", 1));
             SettingsAccount userSettings = new SettingsAccount(ConfigurationType.USER, accountId, serviceName, JsonNodeFactory.instance.objectNode().put("p", 4));
             SettingsAccount agentSettings = new SettingsAccount(ConfigurationType.AGENT, accountId, serviceName, JsonNodeFactory.instance.objectNode().put("p", 3));
@@ -151,7 +151,7 @@ class DefaultConfigurationResolverTest {
         @Test
         @DisplayName("Should publish ConfigurationHitEvent with correct data")
         void publishCorrectEvent() {
-            Input input = new Input(accountId, serviceName, type, null);
+            ResolveConfigurationInput input = new ResolveConfigurationInput(accountId, serviceName, type, null);
             SettingsAccount settings = new SettingsAccount(ConfigurationType.SERVICE, accountId, serviceName, JsonNodeFactory.instance.objectNode());
             
             when(settingsAccountRepository.findAll(accountId, serviceName)).thenReturn(List.of(settings));

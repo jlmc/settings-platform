@@ -4,9 +4,9 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.Configurati
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.ResolveConfigurationInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ObjectNodeMerger;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountDecrypter;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.Input;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ class DefaultConfigurationDecryptionServiceTest {
     @Test
     @DisplayName("Should return merged settings directly when no private key is provided")
     void returnMergedSettingsWhenNoPrivateKey() {
-        Input input = new Input("acc", "srv", ConfigurationType.USER, null);
+        ResolveConfigurationInput input = new ResolveConfigurationInput("acc", "srv", ConfigurationType.USER, null);
         Map<String, Object> mergedMap = Map.of("k", "v");
         ResolvedConfiguration resolved = new ResolvedConfiguration("acc", "srv", ConfigurationType.USER, null, List.of(), mergedMap);
 
@@ -57,7 +57,7 @@ class DefaultConfigurationDecryptionServiceTest {
     @Test
     @DisplayName("Should return merged settings when schemas are null")
     void returnMergedSettingsWhenSchemasAreNull() {
-        Input input = new Input("acc", "srv", ConfigurationType.USER, "private-key");
+        ResolveConfigurationInput input = new ResolveConfigurationInput("acc", "srv", ConfigurationType.USER, "private-key");
         SettingsAccount accountSettings = new SettingsAccount(ConfigurationType.ACCOUNT, "acc", "srv", JsonNodeFactory.instance.objectNode());
         ResolvedConfiguration resolved = new ResolvedConfiguration("acc", "srv", ConfigurationType.USER, null, List.of(accountSettings), Map.of());
         Map<String, Object> mergedMap = Map.of("k", "v");
@@ -74,7 +74,7 @@ class DefaultConfigurationDecryptionServiceTest {
     @Test
     @DisplayName("Should decrypt and merge settings when private key and schemas are present")
     void decryptAndMergeSettings() {
-        Input input = new Input("acc", "srv", ConfigurationType.USER, "private-key");
+        ResolveConfigurationInput input = new ResolveConfigurationInput("acc", "srv", ConfigurationType.USER, "private-key");
         ServiceJsonSchemas schemas = mock(ServiceJsonSchemas.class);
         ObjectNode content = JsonNodeFactory.instance.objectNode().put("encrypted", "value");
         SettingsAccount originalAccount = new SettingsAccount(ConfigurationType.ACCOUNT, "acc", "srv", content);

@@ -3,9 +3,9 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.services;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ResolvedConfiguration;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ServiceJsonSchemas;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.ResolveConfigurationInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.ObjectNodeMerger;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountDecrypter;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.Input;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class DefaultConfigurationDecryptionService implements ConfigurationDecry
     }
 
     @Override
-    public Map<String, Object> decryptForReturn(Input input, ResolvedConfiguration resolved) {
+    public Map<String, Object> decryptForReturn(ResolveConfigurationInput input, ResolvedConfiguration resolved) {
         if (!input.hasPrivateKey()) {
             return resolved.mergedSettings();
         }
@@ -41,7 +41,7 @@ public class DefaultConfigurationDecryptionService implements ConfigurationDecry
     }
 
 
-    private Map<String, Object> decryptForReturn(Input input, List<SettingsAccount> originalSettings, ServiceJsonSchemas schemas) {
+    private Map<String, Object> decryptForReturn(ResolveConfigurationInput input, List<SettingsAccount> originalSettings, ServiceJsonSchemas schemas) {
         if (schemas == null) {
             log.debug(
                     "No Service JSON schemas found for serviceId={}, returning encrypted values",
