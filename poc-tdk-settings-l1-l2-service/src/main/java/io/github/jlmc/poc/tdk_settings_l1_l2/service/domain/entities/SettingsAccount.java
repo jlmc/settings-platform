@@ -3,6 +3,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities;
 import tools.jackson.databind.node.ObjectNode;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -44,5 +45,9 @@ public record SettingsAccount(
                 this.serviceName,
                 this.content.deepCopy()
         );
+    }
+
+    public static List<Supplier<ObjectNode>> asSuppliers(List<SettingsAccount> settings) {
+        return settings.stream().map(account -> (Supplier<ObjectNode>) account).toList();
     }
 }
