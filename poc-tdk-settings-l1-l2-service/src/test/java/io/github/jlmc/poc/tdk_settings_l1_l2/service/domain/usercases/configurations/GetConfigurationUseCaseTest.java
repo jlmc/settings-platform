@@ -171,7 +171,7 @@ class GetConfigurationUseCaseTest {
 
             @SuppressWarnings("unchecked")
             ArgumentCaptor<List<Supplier<ObjectNode>>> captor = ArgumentCaptor.forClass(List.class);
-            verify(objectNodeMerger, times(2)).mergeContentsAsMap(captor.capture());
+            verify(objectNodeMerger, times(1)).mergeContentsAsMap(captor.capture());
 
             List<List<Supplier<ObjectNode>>> allValues = captor.getAllValues();
             List<Supplier<ObjectNode>> sortedSettings = allValues.get(0);
