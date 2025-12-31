@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters;
+package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.http;
 
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.PatientDataRepresentation;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services.PatientService;
