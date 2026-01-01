@@ -5,6 +5,7 @@ import io.gihub.jlmc.poc.commons.settings.http.ClientHttpRequest;
 import io.gihub.jlmc.poc.commons.settings.http.HttpConstants;
 import io.gihub.jlmc.poc.commons.settings.http.HttpExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.http.HttpMethod;
+import io.gihub.jlmc.poc.commons.settings.http.UrlBuilder;
 import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.AccessTokenProvider;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,21 +115,23 @@ public class IndustriesSettingsClient {
     }
 
     private String buildGetConfigurationsUrl(ConfigurationRequest configurationRequest) {
-        switch (configurationRequest.objectType()) {
-            case AGENT:
-                return apiBaseUrl + "/" + SETTINGS_CONFIGURATIONS_PATH + "/" +
-                        "1/" +
-                        configurationRequest.service() + "/" +
-                        configurationRequest.objectType().name().toLowerCase() + "/" +
-                        configurationRequest.objectId();
-            case ACCOUNT:
-                //case RING_GROUP:
-                return apiBaseUrl + "/" + SETTINGS_CONFIGURATIONS_PATH + "/" +
-                        configurationRequest.service() + "/" +
-                        configurationRequest.objectType().name().toLowerCase();
-            default:
-                throw new IllegalArgumentException("Configuration request '" + configurationRequest.objectType() + "' is not supported.");
+        //{{host}}/configurations/:account-id/:service-name/:type
+        UrlBuilder path = UrlBuilder.create()
+                .withBasePath(apiBaseUrl)
+                .path(SETTINGS_CONFIGURATIONS_PATH)
+                .path(configurationRequest.accountId())
+                .path(configurationRequest.service())
+                .path(configurationRequest.objectType().name().toLowerCase());
+
+
+        if (EnumSet.of(ConfigurationType.AGENT, ConfigurationType.USER).contains(configurationRequest.objectType())) {
+            if (configurationRequest.objectId() == null || configurationRequest.objectId().isBlank()) {
+                throw new IllegalArgumentException("Object ID must be provided for object type '" + configurationRequest.objectType() + "'.");
+            }
+            path = path.path(configurationRequest.objectId());
         }
+
+        return path.build();
     }
 
 }
