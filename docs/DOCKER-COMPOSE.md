@@ -189,10 +189,10 @@ PGPASSWORD=pw psql -h localhost -U user -d db -c "SELECT version();"
 - Ports:
     - `mongo1` → `27017:27017`
     - `mongo2` → `27018:27017`
-- Replica set name: `dataDemos`
+- Replica set name: `rs-cluster-example`
 - Commands:
-    - `mongo1`: `mongod --replSet dataDemos --bind_ip localhost,mongo1`
-    - `mongo2`: `mongod --replSet dataDemos --bind_ip localhost,mongo2`
+    - `mongo1`: `mongod --replSet rs-cluster-example --bind_ip localhost,mongo1`
+    - `mongo2`: `mongod --replSet rs-cluster-example --bind_ip localhost,mongo2`
 - Initialization:
     - The `mongodb` service runs an init script after a short delay to initiate the replica set and seed data.
     - Script path (mounted): `docker/volumes/mongo/init/mongo-init.js`
@@ -203,20 +203,20 @@ Connection strings:
 - From another container on the same network:
 
 ```
-mongodb://mongo1:27017,mongo2:27017/?replicaSet=dataDemos
+mongodb://mongo1:27017,mongo2:27017/?replicaSet=rs-cluster-example
 ```
 
 - From the host (macOS/Linux):
 
 ```
 # Connect to primary via localhost ports (replica set aware)
-mongodb://localhost:27017,localhost:27018/?replicaSet=dataDemos
+mongodb://localhost:27017,localhost:27018/?replicaSet=rs-cluster-example
 ```
 
 Replica set status (from a Mongo shell):
 
 ```
-mongosh "mongodb://localhost:27017,localhost:27018/?replicaSet=dataDemos" --eval 'rs.status()'
+mongosh "mongodb://localhost:27017,localhost:27018/?replicaSet=rs-cluster-example" --eval 'rs.status()'
 ```
 
 ---
@@ -289,7 +289,7 @@ docker system prune -f
 - RabbitMQ Management: http://localhost:15672
 - WireMock Admin: http://localhost:9069/__admin/
 - PostgreSQL: postgresql://user:pw@localhost:5432/db
-- MongoDB (replica set): mongodb://localhost:27017,localhost:27018/?replicaSet=dataDemos
+- MongoDB (replica set): mongodb://localhost:27017,localhost:27018/?replicaSet=rs-cluster-example
 
 ---
 
@@ -297,6 +297,6 @@ docker system prune -f
 
 - Kafka: When running applications inside the same compose network, use `kafka:19092`. From the host, use `localhost:9092`.
 - LocalStack: Point AWS SDK clients to `http://localhost:4566` and use the default `test/test` credentials unless overridden.
-- MongoDB: Replica set name is `dataDemos`. The init script is mounted from `docker/volumes/mongo/init/mongo-init.js` and executed by the `mongodb` service.
+- MongoDB: Replica set name is `rs-cluster-example`. The init script is mounted from `docker/volumes/mongo/init/mongo-init.js` and executed by the `mongodb` service.
 - RabbitMQ: Default credentials are `guest` / `guest`. Management UI at `http://localhost:15672`.
 - WireMock: Mappings live under `docker/volumes/wiremock/mappings` and static files in `docker/volumes/wiremock/__files`.

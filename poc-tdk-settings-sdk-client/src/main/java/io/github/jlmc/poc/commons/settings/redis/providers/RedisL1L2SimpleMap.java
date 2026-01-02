@@ -1,0 +1,70 @@
+package io.github.jlmc.poc.commons.settings.redis.providers;
+
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.TrackingArgs;
+import io.lettuce.core.support.caching.CacheAccessor;
+import io.lettuce.core.support.caching.CacheFrontend;
+import io.lettuce.core.support.caching.ClientSideCaching;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Resilient L1/L2 Cache implementation.
+ * Handles automatic re-activation of Client-Side Tracking after reconnections.
+ */
+public class RedisL1L2SimpleMap extends AbstractRedisSettingsProvider {
+
+    private final CacheFrontend<String, String> frontend;
+    private final Map<String, String> mapCache;
+    private final TrackingArgs trackingArgs;
+
+    public RedisL1L2SimpleMap(RedisClient redisClient, String namespace, long ttl, TimeUnit unit, long maximumSize) {
+        super(redisClient, namespace);
+
+        this.mapCache = new ConcurrentHashMap<>();
+
+        this.trackingArgs = TrackingArgs.Builder.enabled().bcast().prefixes(namespace + ":");
+
+        // Set up invalidation logging
+        this.connection.addListener(message -> {
+            if (message.getType().equals("invalidate")) {
+                logger.info("L1 Eviction triggered: {}", message.getContent());
+            }
+        });
+
+        this.frontend = ClientSideCaching.create(CacheAccessor.forMap(mapCache), connection);
+
+        // Initial activation
+        onReconnection();
+    }
+
+    @Override
+    protected void onReconnection() {
+        connection.sync().clientTracking(trackingArgs);
+        mapCache.clear();
+        logger.debug("L1 Simple Map Cache synchronized.");
+    }
+
+    @Override
+    public String getValue(String key) {
+        if (key == null || key.isBlank()) return null;
+        try {
+            return frontend.get(key);
+        } catch (Exception e) {
+            logger.info("Cache access failed for key {}: {}", key, e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        try {
+            frontend.close();
+        } catch (Exception e) {
+            logger.warn("Error closing frontend: {}", e.getMessage());
+        }
+    }
+}

@@ -189,9 +189,9 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    volumes:
-      - ./.volumes/mongo/data/mongo1:/data/db
-    command: mongod --replSet dataDemos --bind_ip localhost,mongo1
+    #volumes:
+    #  - ./.volumes/mongo/data/mongo1:/data/db
+    command: mongod --replSet rs-cluster-example --bind_ip localhost,mongo1
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 5s
@@ -210,9 +210,9 @@ services:
     restart: always
     ports:
       - "27018:27017"
-    volumes:
-      - ./.volumes/mongo/data/mongo2:/data/db
-    command: mongod --replSet dataDemos --bind_ip localhost,mongo2
+    #volumes:
+    #  - ./.volumes/mongo/data/mongo2:/data/db
+    command: mongod --replSet rs-cluster-example --bind_ip localhost,mongo2
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 5s
@@ -237,7 +237,7 @@ services:
     healthcheck:
       test: |
         mongosh --host mongo1 --eval "rs.initiate({
-          _id: 'dataDemos',
+          _id: 'rs-cluster-example',
           members: [
             {_id: 0, host: 'mongo1'},
             {_id: 1, host: 'mongo2'}
@@ -248,7 +248,7 @@ services:
       retries: 3
       start_period: 30s
     volumes:
-      - ./.volumes/mongo/data/mongodb:/data/db
+      #- ./.volumes/mongo/data/mongodb:/data/db
       - ./docker/volumes/mongo/init:/docker-entrypoint-initdb.d
     command: bash -c "sleep 30 && mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"
     #command: bash -c "mongosh mongodb://mongo1:27017 -f /docker-entrypoint-initdb.d/mongo-init.js"

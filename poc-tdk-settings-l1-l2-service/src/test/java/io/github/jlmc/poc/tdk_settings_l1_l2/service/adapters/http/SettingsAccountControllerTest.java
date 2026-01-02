@@ -4,9 +4,9 @@ import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.data.Settings
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http.mappers.SettingsAccountRepresentationMapper;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.SettingsInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.DeleteSettingsAccountUseCase;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.GetSettingsAccountUseCase;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.Input;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings.SaveSettingsAccountUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ class SettingsAccountControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNoContent());
 
-        verify(deleteSettingsAccountUseCase).execute(new Input("acc1", "srv1", ConfigurationType.ACCOUNT));
+        verify(deleteSettingsAccountUseCase).execute(new SettingsInput("acc1", "srv1", ConfigurationType.ACCOUNT));
     }
 
     @Test
@@ -103,7 +103,7 @@ class SettingsAccountControllerTest {
         SettingsAccount entity = new SettingsAccount(ConfigurationType.ACCOUNT, "acc1", "srv1", payload);
         SettingsAccountRepresentation representation = new SettingsAccountRepresentation("ACCOUNT", "acc1", "srv1", payload);
 
-        when(getSettingsAccountUseCase.execute(new Input("acc1", "srv1", ConfigurationType.ACCOUNT)))
+        when(getSettingsAccountUseCase.execute(new SettingsInput("acc1", "srv1", ConfigurationType.ACCOUNT)))
                 .thenReturn(Optional.of(entity));
         when(mapper.toRepresentation(entity)).thenReturn(representation);
 
@@ -123,7 +123,7 @@ class SettingsAccountControllerTest {
 
     @Test
     void getSettingsNotFound() throws Exception {
-        when(getSettingsAccountUseCase.execute(any(Input.class))).thenReturn(Optional.empty());
+        when(getSettingsAccountUseCase.execute(any(SettingsInput.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/settings/acc1/srv1/account"))
                 .andDo(MockMvcResultHandlers.print())

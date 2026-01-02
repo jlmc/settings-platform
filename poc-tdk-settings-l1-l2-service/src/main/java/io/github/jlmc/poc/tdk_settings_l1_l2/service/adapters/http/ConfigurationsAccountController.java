@@ -1,8 +1,8 @@
 package io.github.jlmc.poc.tdk_settings_l1_l2.service.adapters.http;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.ResolveConfigurationInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.GetConfigurationUseCase;
-import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations.Input;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +31,7 @@ public class ConfigurationsAccountController {
     ) {
 
         Map<String, Object> result = getConfigurationUseCase.execute(
-                new Input(
+                new ResolveConfigurationInput(
                         accountId,
                         serviceName,
                         ConfigurationType.fromString(type),

@@ -2,6 +2,7 @@ package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.settings;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.SettingsAccount;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.events.SettingsAccountDeletedEvent;
+import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs.SettingsInput;
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.ports.SettingsAccountRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class DeleteSettingsAccountUseCase {
     }
 
     @Transactional
-    public void execute(Input input) {
+    public void execute(SettingsInput input) {
         SettingsAccount settingsAccount = repository.find(input.accountId(), input.serviceName(), input.type()).orElse(null);
 
         if (settingsAccount != null) {

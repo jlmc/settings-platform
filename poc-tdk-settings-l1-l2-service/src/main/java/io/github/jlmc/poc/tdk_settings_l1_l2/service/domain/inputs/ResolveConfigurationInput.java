@@ -1,8 +1,8 @@
-package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.usercases.configurations;
+package io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.inputs;
 
 import io.github.jlmc.poc.tdk_settings_l1_l2.service.domain.entities.ConfigurationType;
 
-public record Input(
+public record ResolveConfigurationInput(
         String accountId,
         String serviceName,
         ConfigurationType configurationType,
@@ -20,7 +20,7 @@ public record Input(
         );
     }
 
-    boolean hasPrivateKey() {
+    public boolean hasPrivateKey() {
         return this.privateKey != null && !this.privateKey.isBlank();
     }
 }

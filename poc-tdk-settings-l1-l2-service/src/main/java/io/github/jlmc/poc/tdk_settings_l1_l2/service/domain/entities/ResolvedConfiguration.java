@@ -7,6 +7,7 @@ public record ResolvedConfiguration(
         String accountId,
         String serviceName,
         ConfigurationType configurationType,
+        ServiceJsonSchemas serviceJsonSchemas,
         List<SettingsAccount> settingsAccounts,
         Map<String, Object> mergedSettings
 ) {
