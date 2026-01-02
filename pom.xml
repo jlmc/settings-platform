@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.jlmc</groupId>
-    <artifactId>poc-tdk-settings-l1-l2</artifactId>
+    <artifactId>settings-platform</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -22,19 +22,19 @@
     <!-- Modules -->
     <modules>
         <!-- Common module that can be used in the server and client implementations -->
-        <module>poc-tdk-settings-sdk</module>
+        <module>settings-domain</module>
 
         <!-- Server settings implementation -->
-        <module>poc-tdk-settings-l1-l2-service</module>
+        <module>settings-service</module>
 
         <!-- Client settings implementation, to be used in all apps that need to connect with the Server settings implementation -->
-        <module>poc-tdk-settings-sdk-client</module>
+        <module>settings-client</module>
 
         <!-- Spring Boot Starter to facilitate the integration of the Client SDK in Spring Boot applications -->
-        <module>poc-tdk-settings-sdk-client-spring-boot-starter</module>
+        <module>settings-client-spring-boot-starter</module>
 
         <!-- Example Spring WebFlux application that uses the Client SDK -->
-        <module>poc-tdk-l1-l2-app-web-flux</module>
+        <module>settings-webflux-app-example</module>
     </modules>
 
     <!-- Centralized dependency versions -->
