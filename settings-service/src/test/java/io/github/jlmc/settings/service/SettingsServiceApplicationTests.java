@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Disabled
 @SpringBootTest
-class PocTdkSettingsL1L2ServiceApplicationTests {
+class SettingsServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
