@@ -1,15 +1,15 @@
 package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
-import io.gihub.jlmc.poc.commons.settings.IndustriesSettingsClient;
-import io.gihub.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
-import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
-import io.gihub.jlmc.poc.commons.settings.redis.DefaultRedisExecutionStrategy;
-import io.gihub.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
-import io.gihub.jlmc.poc.commons.settings.redis.RedisL1SimpleMap;
-import io.gihub.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
-import io.gihub.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
+import io.github.jlmc.poc.commons.settings.ConfigurationRequest;
+import io.github.jlmc.poc.commons.settings.IndustriesSettingsClient;
+import io.github.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
+import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
+import io.github.jlmc.poc.commons.settings.redis.DefaultRedisExecutionStrategy;
+import io.github.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
+import io.github.jlmc.poc.commons.settings.redis.RedisL1SimpleMap;
+import io.github.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
+import io.github.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
 import io.github.jlmc.poc.settings.sdk.domain.ResolvedConfigurationAssembler;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import org.springframework.beans.factory.ObjectProvider;

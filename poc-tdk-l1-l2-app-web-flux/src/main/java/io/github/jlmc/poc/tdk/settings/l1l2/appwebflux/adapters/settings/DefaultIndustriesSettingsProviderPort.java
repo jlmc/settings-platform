@@ -1,9 +1,9 @@
 package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.settings;
 
-import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
-import io.gihub.jlmc.poc.commons.settings.IndustriesSettingsClient;
-import io.gihub.jlmc.poc.commons.settings.exceptions.SettingsClientException;
-import io.gihub.jlmc.poc.commons.settings.exceptions.SettingsClientHttpException;
+import io.github.jlmc.poc.commons.settings.ConfigurationRequest;
+import io.github.jlmc.poc.commons.settings.IndustriesSettingsClient;
+import io.github.jlmc.poc.commons.settings.exceptions.SettingsClientException;
+import io.github.jlmc.poc.commons.settings.exceptions.SettingsClientHttpException;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
