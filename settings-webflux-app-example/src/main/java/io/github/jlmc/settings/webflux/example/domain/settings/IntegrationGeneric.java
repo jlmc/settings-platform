@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.settings;
+package io.github.jlmc.settings.webflux.example.domain.settings;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

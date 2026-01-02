@@ -1,7 +1,7 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services;
+package io.github.jlmc.settings.webflux.example.domain.services;
 
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.Patient;
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories.PatientRepository;
+import io.github.jlmc.settings.webflux.example.domain.entities.Patient;
+import io.github.jlmc.settings.webflux.example.domain.repositories.PatientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

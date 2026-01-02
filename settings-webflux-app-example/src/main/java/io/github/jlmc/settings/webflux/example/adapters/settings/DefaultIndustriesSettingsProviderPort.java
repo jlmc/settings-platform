@@ -1,10 +1,10 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.settings;
+package io.github.jlmc.settings.webflux.example.adapters.settings;
 
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import io.github.jlmc.settings.client.ConfigurationRequest;
 import io.github.jlmc.settings.client.IndustriesSettingsClient;
 import io.github.jlmc.settings.client.exceptions.SettingsClientException;
 import io.github.jlmc.settings.client.exceptions.SettingsClientHttpException;
+import io.github.jlmc.settings.webflux.example.domain.ports.IndustriesSettingsProviderPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;

@@ -1,7 +1,6 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.settings;
+package io.github.jlmc.settings.webflux.example.adapters.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import io.github.jlmc.settings.client.ConfigurationRequest;
 import io.github.jlmc.settings.client.IndustriesSettingsClient;
 import io.github.jlmc.settings.client.json.JacksonJsonDeserializer;
@@ -14,6 +13,7 @@ import io.github.jlmc.settings.client.redis.keys.StandardKeyBuilder;
 import io.github.jlmc.settings.client.redis.providers.RedisL1L2Caffeine;
 import io.github.jlmc.settings.client.redis.providers.RedisL2OnlyService;
 import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
+import io.github.jlmc.settings.webflux.example.domain.ports.IndustriesSettingsProviderPort;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

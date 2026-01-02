@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.settings;
+package io.github.jlmc.settings.webflux.example.adapters.settings;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;

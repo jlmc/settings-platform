@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports;
+package io.github.jlmc.settings.webflux.example.domain.ports;
 
 
 import io.github.jlmc.settings.client.ConfigurationRequest;

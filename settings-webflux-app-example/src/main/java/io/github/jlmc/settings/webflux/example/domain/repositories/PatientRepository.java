@@ -1,6 +1,6 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories;
+package io.github.jlmc.settings.webflux.example.domain.repositories;
 
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.Patient;
+import io.github.jlmc.settings.webflux.example.domain.entities.Patient;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 

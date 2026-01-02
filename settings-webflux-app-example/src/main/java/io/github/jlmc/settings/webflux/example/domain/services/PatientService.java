@@ -1,12 +1,12 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services;
+package io.github.jlmc.settings.webflux.example.domain.services;
 
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.PatientDataRepresentation;
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories.PatientRepository;
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.settings.IntegrationGeneric;
 import io.github.jlmc.settings.client.ConfigurationRequest;
 import io.github.jlmc.settings.client.auth.BearerTokenCredentials;
 import io.github.jlmc.settings.domain.entities.ConfigurationType;
+import io.github.jlmc.settings.webflux.example.domain.entities.PatientDataRepresentation;
+import io.github.jlmc.settings.webflux.example.domain.ports.IndustriesSettingsProviderPort;
+import io.github.jlmc.settings.webflux.example.domain.repositories.PatientRepository;
+import io.github.jlmc.settings.webflux.example.domain.settings.IntegrationGeneric;
 import org.slf4j.Logger;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;

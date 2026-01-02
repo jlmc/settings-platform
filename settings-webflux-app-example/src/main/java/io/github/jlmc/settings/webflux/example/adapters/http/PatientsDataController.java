@@ -1,7 +1,7 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.adapters.http;
+package io.github.jlmc.settings.webflux.example.adapters.http;
 
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.PatientDataRepresentation;
-import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services.PatientService;
+import io.github.jlmc.settings.webflux.example.domain.entities.PatientDataRepresentation;
+import io.github.jlmc.settings.webflux.example.domain.services.PatientService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

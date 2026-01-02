@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux;
+package io.github.jlmc.settings.webflux.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
