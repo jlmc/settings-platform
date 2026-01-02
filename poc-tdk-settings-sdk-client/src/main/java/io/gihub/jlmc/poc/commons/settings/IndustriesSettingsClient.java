@@ -124,7 +124,7 @@ public class IndustriesSettingsClient {
                 .path(configurationRequest.objectType().name().toLowerCase());
 
 
-        if (EnumSet.of(ConfigurationType.AGENT, ConfigurationType.USER).contains(configurationRequest.objectType())) {
+        if (EnumSet.of(io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType.AGENT, io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType.USER).contains(configurationRequest.objectType())) {
             if (configurationRequest.objectId() == null || configurationRequest.objectId().isBlank()) {
                 throw new IllegalArgumentException("Object ID must be provided for object type '" + configurationRequest.objectType() + "'.");
             }

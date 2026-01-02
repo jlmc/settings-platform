@@ -1,10 +1,10 @@
-package io.gihub.jlmc.poc.commons.settings.redis.sdk.defaults;
+package io.github.jlmc.poc.settings.sdk.domain.components;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts.ObjectNodeMerger;
+import io.github.jlmc.poc.settings.sdk.domain.ObjectNodeMerger;
 
 import java.util.List;
 import java.util.Map;

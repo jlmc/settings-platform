@@ -6,7 +6,6 @@ import io.gihub.jlmc.poc.commons.settings.http.HttpExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.defaults.JacksonObjectNodeMerger;
 import io.gihub.jlmc.poc.commons.settings.resilience.ResilientHttpExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.resilience.RetryExecutor;
 import io.gihub.jlmc.poc.commons.settings.token.AccessTokenProvider;
@@ -14,6 +13,7 @@ import io.gihub.jlmc.poc.commons.settings.token.BearerTokenStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.ClientCredentialsStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.PrivilegedCredentialsStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.TokenOrchestrator;
+import io.github.jlmc.poc.settings.sdk.domain.components.JacksonObjectNodeMerger;
 
 import java.time.Duration;
 import java.util.List;

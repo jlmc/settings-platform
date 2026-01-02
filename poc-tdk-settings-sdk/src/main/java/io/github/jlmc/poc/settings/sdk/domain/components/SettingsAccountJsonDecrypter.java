@@ -1,14 +1,14 @@
-package io.gihub.jlmc.poc.commons.settings.redis.sdk.defaults;
+package io.github.jlmc.poc.settings.sdk.domain.components;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.gihub.jlmc.poc.commons.settings.ConfigurationType;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts.Decryptor;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts.SettingsAccountDecrypter;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.JsonSchema;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.ServiceJsonSchemas;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.SettingsAccount;
+import io.github.jlmc.poc.settings.sdk.domain.Decryptor;
+import io.github.jlmc.poc.settings.sdk.domain.SettingsAccountDecrypter;
+import io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType;
+import io.github.jlmc.poc.settings.sdk.domain.entities.JsonSchema;
+import io.github.jlmc.poc.settings.sdk.domain.entities.ServiceJsonSchemas;
+import io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount;
 
 import java.util.List;
 import java.util.Map;

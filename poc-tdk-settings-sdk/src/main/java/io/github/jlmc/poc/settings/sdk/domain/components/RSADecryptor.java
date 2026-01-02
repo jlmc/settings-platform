@@ -1,6 +1,6 @@
-package io.gihub.jlmc.poc.commons.settings.redis.sdk.defaults;
+package io.github.jlmc.poc.settings.sdk.domain.components;
 
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts.Decryptor;
+import io.github.jlmc.poc.settings.sdk.domain.Decryptor;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;

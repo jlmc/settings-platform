@@ -2,7 +2,7 @@ package io.gihub.jlmc.poc.commons.settings.redis;
 
 import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
 import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts.ObjectNodeMerger;
+import io.github.jlmc.poc.settings.sdk.domain.ObjectNodeMerger;
 
 import java.util.function.Function;
 

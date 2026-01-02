@@ -3,14 +3,14 @@ package io.gihub.jlmc.poc.commons.settings.redis;
 import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
 import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts.ObjectNodeMerger;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.ResolvedConfiguration;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.SettingsAccount;
+import io.github.jlmc.poc.settings.sdk.domain.ObjectNodeMerger;
+import io.github.jlmc.poc.settings.sdk.domain.entities.ResolvedConfiguration;
+import io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount;
 
 import java.util.List;
 import java.util.Map;
 
-import static io.gihub.jlmc.poc.commons.settings.redis.sdk.model.SettingsAccount.asSuppliers;
+import static io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount.asSuppliers;
 
 public class DefaultRedisExecutionStrategy implements RedisExecutionStrategy {
 
@@ -41,6 +41,7 @@ public class DefaultRedisExecutionStrategy implements RedisExecutionStrategy {
         //
         ResolvedConfiguration resolvedConfiguration = jsonDeserializer.deserialize(value, ResolvedConfiguration.class);
         Map<String, Object> stringObjectMap = mergeSettings(resolvedConfiguration.settingsAccounts());
+        // TODO: missing the decryption of complex types
 
         T t = jsonDeserializer.readValueAs(stringObjectMap, responseType);
         //

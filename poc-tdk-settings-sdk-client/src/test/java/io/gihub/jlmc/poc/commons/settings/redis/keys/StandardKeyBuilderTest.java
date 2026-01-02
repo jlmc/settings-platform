@@ -1,7 +1,7 @@
 package io.gihub.jlmc.poc.commons.settings.redis.keys;
 
 import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
-import io.gihub.jlmc.poc.commons.settings.ConfigurationType;
+import io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -9,7 +9,7 @@ import io.gihub.jlmc.poc.commons.settings.redis.DefaultRedisExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisL1SimpleMap;
 import io.gihub.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.defaults.JacksonObjectNodeMerger;
+import io.github.jlmc.poc.settings.sdk.domain.components.JacksonObjectNodeMerger;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

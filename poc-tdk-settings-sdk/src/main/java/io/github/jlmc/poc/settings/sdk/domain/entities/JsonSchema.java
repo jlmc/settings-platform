@@ -1,10 +1,9 @@
-package io.gihub.jlmc.poc.commons.settings.redis.sdk.model;
+package io.github.jlmc.poc.settings.sdk.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.gihub.jlmc.poc.commons.settings.ConfigurationType;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)

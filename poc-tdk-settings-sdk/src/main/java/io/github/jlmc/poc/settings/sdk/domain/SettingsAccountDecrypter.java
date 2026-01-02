@@ -1,8 +1,8 @@
-package io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts;
+package io.github.jlmc.poc.settings.sdk.domain;
 
 
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.ServiceJsonSchemas;
-import io.gihub.jlmc.poc.commons.settings.redis.sdk.model.SettingsAccount;
+import io.github.jlmc.poc.settings.sdk.domain.entities.ServiceJsonSchemas;
+import io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount;
 
 import java.util.List;
 

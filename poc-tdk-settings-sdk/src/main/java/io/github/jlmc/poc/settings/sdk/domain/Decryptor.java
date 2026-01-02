@@ -1,4 +1,4 @@
-package io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts;
+package io.github.jlmc.poc.settings.sdk.domain;
 
 public interface Decryptor {
     String decrypt(String message, String privateKeyStr);

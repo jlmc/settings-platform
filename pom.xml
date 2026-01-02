@@ -29,6 +29,7 @@
         <module>poc-tdk-settings-l1-l2-service</module>
         <module>poc-tdk-settings-sdk-client</module>
         <module>poc-tdk-l1-l2-app-web-flux</module>
+        <module>poc-tdk-settings-sdk</module>
     </modules>
 
     <!-- Centralized dependency versions -->

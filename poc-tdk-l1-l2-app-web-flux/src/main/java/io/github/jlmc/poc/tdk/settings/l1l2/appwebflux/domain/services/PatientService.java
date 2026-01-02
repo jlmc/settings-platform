@@ -1,8 +1,8 @@
 package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services;
 
 import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
-import io.gihub.jlmc.poc.commons.settings.ConfigurationType;
 import io.gihub.jlmc.poc.commons.settings.auth.BearerTokenCredentials;
+import io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.PatientDataRepresentation;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories.PatientRepository;
