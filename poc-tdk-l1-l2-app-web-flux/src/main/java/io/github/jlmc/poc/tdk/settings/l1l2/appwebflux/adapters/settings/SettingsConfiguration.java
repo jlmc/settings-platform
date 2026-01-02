@@ -13,7 +13,6 @@ import io.github.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
 import io.github.jlmc.poc.settings.sdk.domain.ResolvedConfigurationAssembler;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -59,6 +58,7 @@ public class SettingsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public IndustriesSettingsProviderPort industriesSettingsProviderPort(IndustriesSettingsClient industriesSettingsClient) {
         return new DefaultIndustriesSettingsProviderPort(industriesSettingsClient);
     }
@@ -68,9 +68,13 @@ public class SettingsConfiguration {
 
 
     @Bean
-    @ConditionalOnClass({RedisConnectionFactory.class, io.lettuce.core.RedisClient.class})
-    @ConditionalOnBean(RedisConnectionFactory.class)
-    @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redisEnabled", havingValue = "true")
+    @ConditionalOnClass({
+            RedisConnectionFactory.class,
+            io.lettuce.core.RedisClient.class,
+            org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.class})
+    //@ConditionalOnBean(RedisConnectionFactory.class)
+    // tdk.configurations-settings.redis-enabled
+    @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redis-enabled", havingValue = "true")
     @ConditionalOnMissingBean
     public RedisExecutionStrategy redisExecutionStrategy(
             SettingsConfigurationProperties properties,
