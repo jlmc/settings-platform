@@ -43,7 +43,7 @@ public class SettingsConfiguration {
                         .apiBaseUrl(properties.apiBaseUrl())
                         .jsonDeserializer(jsonDeserializer)
                         .useRetryExecutor(false)
-                        .userAgent("tdk-l1-l2-app-webflux")
+                        .userAgent("webflux-app-example")
                         .redisExecutionStrategy(distributedConfigProvider)
                         .build();
 
@@ -62,7 +62,7 @@ public class SettingsConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redis-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "", name = "redis-enabled", havingValue = "true")
     @ConditionalOnClass(com.github.benmanes.caffeine.cache.Cache.class)
     public RedisSettingsProvider redisL1L2CaffeineSettingsProvider(
             SettingsConfigurationProperties properties,
@@ -77,7 +77,7 @@ public class SettingsConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redis-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "", name = "redis-enabled", havingValue = "true")
     @ConditionalOnMissingBean(RedisSettingsProvider.class)
     public RedisSettingsProvider redisL2OnlySettingsProvider(
             SettingsConfigurationProperties properties,
@@ -91,7 +91,7 @@ public class SettingsConfiguration {
             RedisConnectionFactory.class,
             io.lettuce.core.RedisClient.class,
             org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.class})
-    @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redis-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "", name = "redis-enabled", havingValue = "true")
     @ConditionalOnMissingBean
     public DistributedConfigProvider redisExecutionStrategy(
             SettingsConfigurationProperties properties,

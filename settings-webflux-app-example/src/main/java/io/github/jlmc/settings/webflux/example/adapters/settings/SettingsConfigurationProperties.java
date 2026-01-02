@@ -9,7 +9,8 @@ import java.time.Duration;
 import java.util.List;
 
 @Validated
-@ConfigurationProperties(prefix = "tdk.configurations-settings")
+@ConfigurationProperties(prefix = "settings.webflux-app.client")
+
 public record SettingsConfigurationProperties(
         @NotBlank String apiBaseUrl,
         @DefaultValue("settings") String namespace,
