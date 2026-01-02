@@ -34,7 +34,7 @@
         <module>poc-tdk-settings-sdk-client-spring-boot-starter</module>
 
         <!-- Example Spring WebFlux application that uses the Client SDK -->
-        <module>poc-tdk-l1-l2-app-web-flux</module>
+        <module>settings-webflux-app-example</module>
     </modules>
 
     <!-- Centralized dependency versions -->

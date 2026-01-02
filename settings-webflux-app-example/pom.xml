@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.jlmc</groupId>
-    <artifactId>poc-tdk-l1-l2-app-web-flux</artifactId>
+    <artifactId>settings-webflux-app-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>poc-tdk-settings-l1-l2-app-web-flux</name>
     <description>poc-tdk-settings-l1-l2-app-web-flux</description>
