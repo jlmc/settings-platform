@@ -23,7 +23,7 @@
         <!-- SDK Dependency -->
         <dependency>
             <groupId>io.github.jlmc</groupId>
-            <artifactId>poc-tdk-settings-sdk</artifactId>
+            <artifactId>settings-domain</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

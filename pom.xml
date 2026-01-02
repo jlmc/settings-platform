@@ -22,10 +22,10 @@
     <!-- Modules -->
     <modules>
         <!-- Common module that can be used in the server and client implementations -->
-        <module>poc-tdk-settings-sdk</module>
+        <module>settings-domain</module>
 
         <!-- Server settings implementation -->
-        <module>poc-tdk-settings-l1-l2-service</module>
+        <module>settings-service</module>
 
         <!-- Client settings implementation, to be used in all apps that need to connect with the Server settings implementation -->
         <module>poc-tdk-settings-sdk-client</module>

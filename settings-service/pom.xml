@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.jlmc</groupId>
-    <artifactId>poc-tdk-settings-l1-l2-service</artifactId>
+    <artifactId>settings-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>poc-tdk-settings-l1-l2-service</name>
 
