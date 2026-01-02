@@ -1,1 +1,1 @@
-io.github.jlmc.poc.commons.settings.spring.SettingsClientAutoConfiguration
+io.github.jlmc.settings.client.spring.SettingsClientAutoConfiguration
