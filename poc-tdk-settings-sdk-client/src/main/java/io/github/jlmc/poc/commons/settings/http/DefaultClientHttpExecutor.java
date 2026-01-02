@@ -204,6 +204,6 @@ public class DefaultClientHttpExecutor implements ClientHttpExecutor {
 
     @Override
     public void close() {
-        this.httpClient.close();
+        this.httpClient.shutdown();
     }
 }

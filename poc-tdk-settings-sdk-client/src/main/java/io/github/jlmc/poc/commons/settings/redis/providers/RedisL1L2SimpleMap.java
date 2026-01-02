@@ -57,4 +57,14 @@ public class RedisL1L2SimpleMap extends AbstractRedisSettingsProvider {
             return null;
         }
     }
+
+    @Override
+    public void close() {
+        super.close();
+        try {
+            frontend.close();
+        } catch (Exception e) {
+            logger.warn("Error closing frontend: {}", e.getMessage());
+        }
+    }
 }

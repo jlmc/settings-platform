@@ -64,7 +64,8 @@ public abstract class AbstractRedisSettingsProvider implements RedisSettingsProv
 
     @Override
     public void close() {
-        if (connection != null) connection.close();
-        if (client != null) client.shutdown();
+        if (connection != null && connection.isOpen()) {
+            connection.close();
+        }
     }
 }

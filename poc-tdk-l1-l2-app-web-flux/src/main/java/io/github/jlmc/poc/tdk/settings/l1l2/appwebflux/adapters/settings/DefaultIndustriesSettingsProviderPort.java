@@ -33,7 +33,7 @@ import java.time.Duration;
  *   <li>Errors are never swallowed and are always propagated downstream</li>
  * </ul>
  */
-public class DefaultIndustriesSettingsProviderPort implements IndustriesSettingsProviderPort {
+public class DefaultIndustriesSettingsProviderPort implements IndustriesSettingsProviderPort, AutoCloseable {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(DefaultIndustriesSettingsProviderPort.class);
@@ -42,6 +42,19 @@ public class DefaultIndustriesSettingsProviderPort implements IndustriesSettings
 
     public DefaultIndustriesSettingsProviderPort(IndustriesSettingsClient industriesSettingsClient) {
         this.industriesSettingsClient = industriesSettingsClient;
+    }
+
+    private boolean closed = false;
+
+    @Override
+    public void close() throws Exception {
+        if (closed) {
+            return;
+        }
+        if (industriesSettingsClient != null) {
+            industriesSettingsClient.close();
+        }
+        closed = true;
     }
 
     /**

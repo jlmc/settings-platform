@@ -62,6 +62,8 @@ public class ResilientHttpExecutionStrategy implements HttpExecutionStrategy {
 
     @Override
     public void close() throws Exception {
-        this.clientHttpExecutor.close();
+        if (clientHttpExecutor != null) {
+            this.clientHttpExecutor.close();
+        }
     }
 }
