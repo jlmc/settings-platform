@@ -10,16 +10,16 @@ import java.util.Map;
 
 public class DefaultRedisExecutionStrategy implements RedisExecutionStrategy {
 
-    private final RedisL1L2SimpleMap redisL1SimpleMap;
+    private final RedisSettingsProvider redisSettingsProvider;
     private final KeyBuilder keyBuilder;
     private final JsonDeserializer jsonDeserializer;
     private final ResolvedConfigurationAssembler resolvedConfigurationAssembler;
 
-    public DefaultRedisExecutionStrategy(RedisL1L2SimpleMap redisL1SimpleMap,
+    public DefaultRedisExecutionStrategy(RedisSettingsProvider redisSettingsProvider,
                                          KeyBuilder keyBuilder,
                                          JsonDeserializer jsonDeserializer,
                                          ResolvedConfigurationAssembler resolvedConfigurationAssembler) {
-        this.redisL1SimpleMap = redisL1SimpleMap;
+        this.redisSettingsProvider = redisSettingsProvider;
         this.keyBuilder = keyBuilder;
         this.jsonDeserializer = jsonDeserializer;
         this.resolvedConfigurationAssembler = resolvedConfigurationAssembler;
@@ -28,7 +28,7 @@ public class DefaultRedisExecutionStrategy implements RedisExecutionStrategy {
     @Override
     public <T> T getOrNull(ConfigurationRequest request, Class<T> responseType) {
         String key = keyBuilder.build(request);
-        String value = redisL1SimpleMap.getValue(key);
+        String value = redisSettingsProvider.getValue(key);
 
         if (value == null || value.isBlank()) {
             return null;

@@ -1,5 +1,6 @@
-package io.github.jlmc.poc.commons.settings.redis;
+package io.github.jlmc.poc.commons.settings.redis.providers;
 
+import io.github.jlmc.poc.commons.settings.redis.RedisSettingsProvider;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.RedisChannelHandler;
 import io.lettuce.core.RedisClient;
@@ -16,7 +17,7 @@ import java.net.SocketAddress;
  * Direct access to Redis without local memory storage (L1).
  * Suitable for data that changes frequently across multiple instances.
  */
-public class RedisL2OnlyService implements AutoCloseable {
+public class RedisL2OnlyService implements RedisSettingsProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisL2OnlyService.class);
 
     private final RedisClient client;
@@ -53,6 +54,7 @@ public class RedisL2OnlyService implements AutoCloseable {
      * Directly fetches the value from Redis.
      * Every call results in a network round-trip.
      */
+    @Override
     public String getValue(String key) {
         if (key == null || key.isBlank()) return null;
 
@@ -64,6 +66,17 @@ public class RedisL2OnlyService implements AutoCloseable {
             LOGGER.info("Failed to fetch key {} from Redis L2. Reason: {}", key, e.getMessage());
             return null;
         }
+    }
+
+
+    @Override
+    public String getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return connection != null && connection.isOpen();
     }
 
     @Override

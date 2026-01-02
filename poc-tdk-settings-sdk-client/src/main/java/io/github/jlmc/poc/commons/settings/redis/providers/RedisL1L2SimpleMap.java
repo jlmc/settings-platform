@@ -1,5 +1,6 @@
-package io.github.jlmc.poc.commons.settings.redis;
+package io.github.jlmc.poc.commons.settings.redis.providers;
 
+import io.github.jlmc.poc.commons.settings.redis.RedisSettingsProvider;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.RedisChannelHandler;
 import io.lettuce.core.RedisClient;
@@ -16,27 +17,26 @@ import org.slf4j.LoggerFactory;
 import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Resilient L1/L2 Cache implementation.
  * Handles automatic re-activation of Client-Side Tracking after reconnections.
  */
-public class RedisL1L2SimpleMap implements AutoCloseable {
+public class RedisL1L2SimpleMap implements RedisSettingsProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisL1L2Caffeine.class);
 
     private final RedisClient client;
+    private final String namespace;
     private final StatefulRedisConnection<String, String> connection;
     private final CacheFrontend<String, String> frontend;
     private final Map<String, String> simpleMapCache;
     private final TrackingArgs trackingArgs;
 
     public RedisL1L2SimpleMap(RedisClient redisClient,
-                             String namespace,
-                             long ttlDuration,
-                             TimeUnit ttlUnit) {
+                             String namespace) {
         this.client = redisClient;
+        this.namespace = namespace;
 
         // 1. Force RESP3 (Mandatory for push notifications)
         this.client.setOptions(ClientOptions.builder()
@@ -88,6 +88,7 @@ public class RedisL1L2SimpleMap implements AutoCloseable {
         );
     }
 
+    @Override
     public String getValue(String key) {
         if (key == null || key.isBlank()) return null;
         try {
@@ -96,6 +97,16 @@ public class RedisL1L2SimpleMap implements AutoCloseable {
             LOGGER.info("Cache unavailable for key {}. Reason: {}", key, e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public String getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return connection != null && connection.isOpen();
     }
 
     @Override

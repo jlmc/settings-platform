@@ -1,7 +1,8 @@
-package io.github.jlmc.poc.commons.settings.redis;
+package io.github.jlmc.poc.commons.settings.redis.providers;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import io.github.jlmc.poc.commons.settings.redis.RedisSettingsProvider;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.RedisChannelHandler;
 import io.lettuce.core.RedisClient;
@@ -22,11 +23,12 @@ import java.util.concurrent.TimeUnit;
  * Resilient L1/L2 Cache implementation.
  * Handles automatic re-activation of Client-Side Tracking after reconnections.
  */
-public class RedisL1L2Caffeine implements AutoCloseable {
+public class RedisL1L2Caffeine implements RedisSettingsProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisL1L2Caffeine.class);
 
     private final RedisClient client;
+    private final String namespace;
     private final StatefulRedisConnection<String, String> connection;
     private final CacheFrontend<String, String> frontend;
     private final Cache<String, String> caffeineCache;
@@ -37,6 +39,7 @@ public class RedisL1L2Caffeine implements AutoCloseable {
                              long ttlDuration,
                              TimeUnit ttlUnit) {
         this.client = redisClient;
+        this.namespace = namespace;
 
         // 1. Force RESP3 (Mandatory for push notifications)
         this.client.setOptions(ClientOptions.builder()
@@ -91,6 +94,7 @@ public class RedisL1L2Caffeine implements AutoCloseable {
         );
     }
 
+    @Override
     public String getValue(String key) {
         if (key == null || key.isBlank()) return null;
         try {
@@ -99,6 +103,16 @@ public class RedisL1L2Caffeine implements AutoCloseable {
             LOGGER.info("Cache unavailable for key {}. Reason: {}", key, e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public String getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return connection != null && connection.isOpen();
     }
 
     @Override
