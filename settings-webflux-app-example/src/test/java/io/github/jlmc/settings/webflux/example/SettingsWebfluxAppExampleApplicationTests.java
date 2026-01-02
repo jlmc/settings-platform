@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Disabled
 @SpringBootTest
-class PocTdkSettingsL1L2AppWebFluxApplicationTests {
+class SettingsWebfluxAppExampleApplicationTests {
 
     @Test
     void contextLoads() {

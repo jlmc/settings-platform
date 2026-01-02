@@ -2,7 +2,7 @@
   <configuration default="false" name="App-web-flux-client" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="settings-webflux-app-example" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.jlmc.settings.webflux.example.PocTdkSettingsL1L2AppWebFluxApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.jlmc.settings.webflux.example.SettingsWebfluxAppExampleApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
