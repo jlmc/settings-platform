@@ -35,7 +35,9 @@ public abstract class AbstractRedisSettingsProvider implements RedisSettingsProv
             @Override
             public void onRedisConnected(RedisChannelHandler<?, ?> c, SocketAddress socketAddress) {
                 logger.info("Redis connected/reconnected at {}. [Namespace: {}]", socketAddress, namespace);
-                onReconnection();
+                if (connection != null) {
+                    onReconnection();
+                }
             }
 
             @Override

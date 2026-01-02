@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.TrackingArgs;
+import io.lettuce.core.api.push.PushMessage;
 import io.lettuce.core.support.caching.CacheAccessor;
 import io.lettuce.core.support.caching.CacheFrontend;
 import io.lettuce.core.support.caching.ClientSideCaching;
@@ -28,10 +29,12 @@ public class RedisL1L2Caffeine extends AbstractRedisSettingsProvider {
                 .expireAfterWrite(ttl, unit)
                 .build();
 
+        // 1️⃣ Inicializa a conexão
+
         this.trackingArgs = TrackingArgs.Builder.enabled().bcast().prefixes(namespace + ":");
 
         // Set up invalidation logging
-        this.connection.addListener(message -> {
+        this.connection.addListener((PushMessage message) -> {
             if (message.getType().equals("invalidate")) {
                 logger.info("L1 Eviction triggered: {}", message.getContent());
             }
