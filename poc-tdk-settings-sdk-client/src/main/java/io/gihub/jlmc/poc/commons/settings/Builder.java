@@ -13,11 +13,9 @@ import io.gihub.jlmc.poc.commons.settings.token.BearerTokenStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.ClientCredentialsStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.PrivilegedCredentialsStrategy;
 import io.gihub.jlmc.poc.commons.settings.token.TokenOrchestrator;
-import io.github.jlmc.poc.settings.sdk.domain.components.JacksonObjectNodeMerger;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Function;
 
 public class Builder {
 
@@ -29,8 +27,7 @@ public class Builder {
     private RetryExecutor retryExecutor; // TODO: initialize with defaultRetryExecutor()
     private HttpExecutionStrategy httpExecutionStrategy;
     private AccessTokenProvider accessTokenProvider;
-    private RedisExecutionStrategy redisExecutionStrategy; // TODO: initialize with defaultRedisExecutionStrategy()
-    private RedisBuilder redisBuilder;
+    private RedisExecutionStrategy redisExecutionStrategy;
     private boolean useRetryExecutor = false; // TODO: change to true once defaultRetryExecutor is implemented
 
     public Builder apiBaseUrl(String value) {
@@ -83,10 +80,6 @@ public class Builder {
         return this;
     }
 
-    public Builder redis(Function<RedisBuilder, RedisBuilder> block) {
-        this.redisBuilder = block.apply(new RedisBuilder());
-        return this;
-    }
 
     public IndustriesSettingsClient build() {
         if (apiBaseUrl == null) {
@@ -114,32 +107,13 @@ public class Builder {
                         )
                 );
 
-        RedisExecutionStrategy redisStrategy =
-                redisExecutionStrategy != null
-                        ? redisExecutionStrategy
-                        : redisBuilder != null
-                        ? redisBuilder.build(jsonDeserializer)
-                        : null;
-
-
-        /*
-           private IndustriesSettingsClient(
-            String apiBaseUrl,
-            HttpExecutionStrategy httpExecutionStrategy,
-            AccessTokenProvider accessTokenProvider,
-            JsonDeserializer jsonDeserializer,
-            Duration requestTimeout,
-            RedisExecutionStrategy redisExecutionStrategy
-    )
-         */
-
         return new IndustriesSettingsClient(
                 apiBaseUrl,
                 httpStrategy,
                 tokenProvider,
                 jsonDeserializer,
                 requestTimeout,
-                redisStrategy
+                redisExecutionStrategy
         );
     }
 
@@ -204,55 +178,4 @@ public class Builder {
     /* =========================
        Redis Builder
        ========================= */
-
-    public static class RedisBuilder {
-
-        private String redisAddress = "redis://127.0.0.1:6379/0";
-        private String redisPassword;
-        private boolean cluster;
-        private String namespace = "industries_settings";
-        private Function<ConfigurationRequest, String> accountIdProvider;
-
-        public RedisBuilder address(String value) {
-            this.redisAddress = value;
-            return this;
-        }
-
-        public RedisBuilder password(String value) {
-            this.redisPassword = value;
-            return this;
-        }
-
-        public RedisBuilder cluster(boolean value) {
-            this.cluster = value;
-            return this;
-        }
-
-        public RedisBuilder namespace(String value) {
-            this.namespace = value;
-            return this;
-        }
-
-        public RedisBuilder accountIdProvider(Function<ConfigurationRequest, String> value) {
-            this.accountIdProvider = value;
-            return this;
-        }
-
-        public RedisExecutionStrategy build(JsonDeserializer jsonDeserializer) {
-            if (accountIdProvider == null) {
-                throw new IllegalStateException(
-                        "Redis accountIdProvider is required when Redis is enabled"
-                );
-            }
-
-            ObjectMapper andRegisterModules = new ObjectMapper().findAndRegisterModules();
-            return RedisExecutionStrategy.createDefault(
-                    jsonDeserializer,
-                    redisAddress,
-                    redisPassword,
-                    accountIdProvider,
-                    new JacksonObjectNodeMerger(andRegisterModules)
-            );
-        }
-    }
 }

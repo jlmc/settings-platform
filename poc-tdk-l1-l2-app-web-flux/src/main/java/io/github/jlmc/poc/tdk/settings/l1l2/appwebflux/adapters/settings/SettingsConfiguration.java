@@ -8,9 +8,15 @@ import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.redis.DefaultRedisExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisL1SimpleMap;
+import io.gihub.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
 import io.gihub.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
-import io.github.jlmc.poc.settings.sdk.domain.components.JacksonObjectNodeMerger;
+import io.github.jlmc.poc.settings.sdk.domain.ResolvedConfigurationAssembler;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +36,11 @@ public class SettingsConfiguration {
     public IndustriesSettingsClient industriesSettingsClient(
             SettingsConfigurationProperties properties,
             JsonDeserializer jsonDeserializer,
-            RedisExecutionStrategy redisExecutionStrategy
+            ObjectProvider<RedisExecutionStrategy> redisExecutionStrategyProvider
     ) {
+
+        RedisExecutionStrategy redisExecutionStrategy = redisExecutionStrategyProvider.getIfAvailable();
+
         IndustriesSettingsClient industriesSettingsClient =
                 IndustriesSettingsClient.builder()
                         .apiBaseUrl(properties.apiBaseUrl())
@@ -40,7 +49,6 @@ public class SettingsConfiguration {
                         .userAgent("tdk-l1-l2-app-webflux")
                         .redisExecutionStrategy(redisExecutionStrategy)
                         .build();
-
 
         return industriesSettingsClient;
     }
@@ -51,10 +59,25 @@ public class SettingsConfiguration {
     }
 
     @Bean
+    public IndustriesSettingsProviderPort industriesSettingsProviderPort(IndustriesSettingsClient industriesSettingsClient) {
+        return new DefaultIndustriesSettingsProviderPort(industriesSettingsClient);
+    }
+
+    // Beans for decryption
+    // this beans should be optional and only created when decryption is needed and the redis is enabled
+
+
+    @Bean
+    @ConditionalOnClass({RedisConnectionFactory.class, io.lettuce.core.RedisClient.class})
+    @ConditionalOnBean(RedisConnectionFactory.class)
+    @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redisEnabled", havingValue = "true")
+    @ConditionalOnMissingBean
     public RedisExecutionStrategy redisExecutionStrategy(
+            SettingsConfigurationProperties properties,
             RedisConnectionFactory connectionFactory,
-            ObjectMapper objectMapper,
-            JsonDeserializer jsonDeserializer) {
+            JsonDeserializer jsonDeserializer,
+            ObjectMapper objectMapper
+    ) {
 
         io.lettuce.core.RedisClient redisClient =
                 (io.lettuce.core.RedisClient) ((org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory) connectionFactory)
@@ -64,29 +87,18 @@ public class SettingsConfiguration {
             throw new IllegalStateException("RedisClient is null, ensure that you are using LettuceConnectionFactory");
         }
 
-        String namespace = "settings";
-        RedisL1SimpleMap redisL1SimpleMap =
-                new RedisL1SimpleMap(redisClient, namespace);
+        String namespace = properties.namespace();
+        RedisL1SimpleMap redisL1SimpleMap = new RedisL1SimpleMap(redisClient, namespace);
 
-        StandardKeyBuilder keyBuilder =
-                new StandardKeyBuilder(namespace, ConfigurationRequest::accountId);
+        KeyBuilder keyBuilder = new StandardKeyBuilder(namespace, ConfigurationRequest::accountId);
 
-
-        // TODO: consider to make JacksonObjectNodeMerger a bean
-        JacksonObjectNodeMerger jacksonObjectNodeMerger = new JacksonObjectNodeMerger(objectMapper);
+        ResolvedConfigurationAssembler resolvedConfigurationAssembler = ResolvedConfigurationAssembler.defaultAssembler(objectMapper);
 
         return new DefaultRedisExecutionStrategy(
                 redisL1SimpleMap,
                 keyBuilder,
                 jsonDeserializer,
-                jacksonObjectNodeMerger
+                resolvedConfigurationAssembler
         );
     }
-
-    @Bean
-    public IndustriesSettingsProviderPort industriesSettingsProviderPort(IndustriesSettingsClient industriesSettingsClient) {
-        return new DefaultIndustriesSettingsProviderPort(industriesSettingsClient);
-    }
-
-
 }

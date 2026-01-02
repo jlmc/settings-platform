@@ -1,5 +1,6 @@
 package io.github.jlmc.poc.settings.sdk.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -17,4 +18,9 @@ public record ResolvedConfiguration(
         List<SettingsAccount> settingsAccounts,
         Map<String, Object> mergedSettings
 ) {
+
+    @JsonIgnore
+    public boolean hasSchema() {
+        return this.serviceJsonSchemas != null;
+    }
 }
