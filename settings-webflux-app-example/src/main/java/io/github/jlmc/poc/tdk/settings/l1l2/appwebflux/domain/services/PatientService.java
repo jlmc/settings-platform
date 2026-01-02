@@ -2,11 +2,11 @@ package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services;
 
 import io.github.jlmc.poc.commons.settings.ConfigurationRequest;
 import io.github.jlmc.poc.commons.settings.auth.BearerTokenCredentials;
-import io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.PatientDataRepresentation;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories.PatientRepository;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.settings.IntegrationGeneric;
+import io.github.jlmc.settings.domain.entities.ConfigurationType;
 import org.slf4j.Logger;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;

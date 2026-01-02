@@ -1,14 +1,14 @@
-package io.github.jlmc.poc.settings.sdk.domain.components;
+package io.github.jlmc.settings.domain.components;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.github.jlmc.poc.settings.sdk.domain.Decryptor;
-import io.github.jlmc.poc.settings.sdk.domain.SettingsAccountDecrypter;
-import io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType;
-import io.github.jlmc.poc.settings.sdk.domain.entities.JsonSchema;
-import io.github.jlmc.poc.settings.sdk.domain.entities.ServiceJsonSchemas;
-import io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount;
+import io.github.jlmc.settings.domain.entities.ConfigurationType;
+import io.github.jlmc.settings.domain.entities.JsonSchema;
+import io.github.jlmc.settings.domain.entities.ServiceJsonSchemas;
+import io.github.jlmc.settings.domain.entities.SettingsAccount;
+import io.github.jlmc.settings.domain.ports.Decryptor;
+import io.github.jlmc.settings.domain.ports.SettingsAccountDecrypter;
 
 import java.util.List;
 import java.util.Map;

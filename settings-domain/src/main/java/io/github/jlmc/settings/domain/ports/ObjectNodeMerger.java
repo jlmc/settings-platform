@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.settings.sdk.domain;
+package io.github.jlmc.settings.domain.ports;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

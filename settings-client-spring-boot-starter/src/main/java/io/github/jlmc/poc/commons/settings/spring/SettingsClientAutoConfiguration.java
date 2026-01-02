@@ -14,7 +14,7 @@ import io.github.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
 import io.github.jlmc.poc.commons.settings.redis.providers.RedisL1L2Caffeine;
 import io.github.jlmc.poc.commons.settings.redis.providers.RedisL2OnlyService;
 import io.github.jlmc.poc.commons.settings.token.AccessTokenProvider;
-import io.github.jlmc.poc.settings.sdk.domain.ResolvedConfigurationAssembler;
+import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

@@ -1,6 +1,6 @@
-package io.github.jlmc.poc.settings.sdk.domain.components;
+package io.github.jlmc.settings.domain.components;
 
-import io.github.jlmc.poc.settings.sdk.domain.Decryptor;
+import io.github.jlmc.settings.domain.ports.Decryptor;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;

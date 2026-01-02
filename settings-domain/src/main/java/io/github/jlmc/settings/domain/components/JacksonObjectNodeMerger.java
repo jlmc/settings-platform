@@ -1,10 +1,10 @@
-package io.github.jlmc.poc.settings.sdk.domain.components;
+package io.github.jlmc.settings.domain.components;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.github.jlmc.poc.settings.sdk.domain.ObjectNodeMerger;
+import io.github.jlmc.settings.domain.ports.ObjectNodeMerger;
 
 import java.util.List;
 import java.util.Map;

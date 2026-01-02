@@ -9,6 +9,7 @@ import io.github.jlmc.poc.commons.settings.http.UrlBuilder;
 import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.github.jlmc.poc.commons.settings.redis.DistributedConfigProvider;
 import io.github.jlmc.poc.commons.settings.token.AccessTokenProvider;
+import io.github.jlmc.settings.domain.entities.ConfigurationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +125,7 @@ public class IndustriesSettingsClient implements AutoCloseable {
                 .path(configurationRequest.objectType().name().toLowerCase());
 
 
-        if (EnumSet.of(io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType.AGENT, io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType.USER).contains(configurationRequest.objectType())) {
+        if (EnumSet.of(ConfigurationType.AGENT, ConfigurationType.USER).contains(configurationRequest.objectType())) {
             if (configurationRequest.objectId() == null || configurationRequest.objectId().isBlank()) {
                 throw new IllegalArgumentException("Object ID must be provided for object type '" + configurationRequest.objectType() + "'.");
             }

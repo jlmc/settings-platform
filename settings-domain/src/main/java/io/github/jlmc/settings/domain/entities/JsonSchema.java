@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.settings.sdk.domain.entities;
+package io.github.jlmc.settings.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

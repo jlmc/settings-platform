@@ -1,6 +1,7 @@
 package io.github.jlmc.poc.commons.settings;
 
 import io.github.jlmc.poc.commons.settings.auth.AuthCredentials;
+import io.github.jlmc.settings.domain.entities.ConfigurationType;
 
 import java.util.Objects;
 
@@ -11,13 +12,13 @@ import java.util.Objects;
  * to request configuration data for a specific object (e.g., an agent, account, or team)
  * within a Talkdesk service.
  *
- * @see io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType
+ * @see ConfigurationType
  * @see AuthCredentials
  */
 public record ConfigurationRequest(
         AuthCredentials authCredentials,
         String service,
-        io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType objectType,
+        ConfigurationType objectType,
         String objectId,
         String rsaPrivateKey,
         String interactionId,
@@ -26,7 +27,7 @@ public record ConfigurationRequest(
     public ConfigurationRequest(
             AuthCredentials authCredentials,
             String service,
-            io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType objectType,
+            ConfigurationType objectType,
             String objectId,
             String rsaPrivateKey,
             String interactionId,
@@ -50,7 +51,7 @@ public record ConfigurationRequest(
     public static ConfigurationRequest standard(
             AuthCredentials authCredentials,
             String service,
-            io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType objectType,
+            ConfigurationType objectType,
             String objectId
     ) {
         return new ConfigurationRequest(authCredentials, service, objectType, objectId, null, null, null);
@@ -59,7 +60,7 @@ public record ConfigurationRequest(
     public static ConfigurationRequest standardWithAccountId(
             AuthCredentials authCredentials,
             String service,
-            io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType objectType,
+            ConfigurationType objectType,
             String objectId,
             String accountId
     ) {
@@ -72,7 +73,7 @@ public record ConfigurationRequest(
     public static ConfigurationRequest withRsaEncryption(
             AuthCredentials authCredentials,
             String service,
-            io.github.jlmc.poc.settings.sdk.domain.entities.ConfigurationType objectType,
+            ConfigurationType objectType,
             String objectId,
             String rsaPrivateKey,
             String interactionId

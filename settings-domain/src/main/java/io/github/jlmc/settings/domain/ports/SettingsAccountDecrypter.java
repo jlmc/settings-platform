@@ -1,8 +1,8 @@
-package io.github.jlmc.poc.settings.sdk.domain;
+package io.github.jlmc.settings.domain.ports;
 
 
-import io.github.jlmc.poc.settings.sdk.domain.entities.ServiceJsonSchemas;
-import io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount;
+import io.github.jlmc.settings.domain.entities.ServiceJsonSchemas;
+import io.github.jlmc.settings.domain.entities.SettingsAccount;
 
 import java.util.List;
 

@@ -1,19 +1,18 @@
-package io.github.jlmc.poc.settings.sdk.domain;
+package io.github.jlmc.settings.domain.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.jlmc.poc.settings.sdk.domain.components.JacksonObjectNodeMerger;
-import io.github.jlmc.poc.settings.sdk.domain.components.RSADecryptor;
-import io.github.jlmc.poc.settings.sdk.domain.components.SettingsAccountJsonDecrypter;
-import io.github.jlmc.poc.settings.sdk.domain.entities.ResolvedConfiguration;
-import io.github.jlmc.poc.settings.sdk.domain.entities.ServiceJsonSchemas;
-import io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount;
+import io.github.jlmc.settings.domain.entities.ResolvedConfiguration;
+import io.github.jlmc.settings.domain.entities.ServiceJsonSchemas;
+import io.github.jlmc.settings.domain.entities.SettingsAccount;
+import io.github.jlmc.settings.domain.ports.ObjectNodeMerger;
+import io.github.jlmc.settings.domain.ports.SettingsAccountDecrypter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
-import static io.github.jlmc.poc.settings.sdk.domain.entities.SettingsAccount.asSuppliers;
+import static io.github.jlmc.settings.domain.entities.SettingsAccount.asSuppliers;
 
 public class ResolvedConfigurationAssembler {
 

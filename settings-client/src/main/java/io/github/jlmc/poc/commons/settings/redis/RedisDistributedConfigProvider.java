@@ -3,8 +3,8 @@ package io.github.jlmc.poc.commons.settings.redis;
 import io.github.jlmc.poc.commons.settings.ConfigurationRequest;
 import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.github.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
-import io.github.jlmc.poc.settings.sdk.domain.ResolvedConfigurationAssembler;
-import io.github.jlmc.poc.settings.sdk.domain.entities.ResolvedConfiguration;
+import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
+import io.github.jlmc.settings.domain.entities.ResolvedConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

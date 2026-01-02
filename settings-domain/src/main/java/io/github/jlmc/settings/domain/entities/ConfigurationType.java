@@ -1,4 +1,4 @@
-package io.github.jlmc.poc.settings.sdk.domain.entities;
+package io.github.jlmc.settings.domain.entities;
 
 // TODO: move to sdk module
 public enum ConfigurationType {
