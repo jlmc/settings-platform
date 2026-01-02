@@ -1,8 +1,14 @@
 package io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.services;
 
+import io.gihub.jlmc.poc.commons.settings.ConfigurationRequest;
+import io.gihub.jlmc.poc.commons.settings.ConfigurationType;
+import io.gihub.jlmc.poc.commons.settings.auth.BearerTokenCredentials;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.entities.PatientDataRepresentation;
+import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.ports.IndustriesSettingsProviderPort;
 import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.repositories.PatientRepository;
+import io.github.jlmc.poc.tdk.settings.l1l2.appwebflux.domain.settings.IntegrationGeneric;
 import org.slf4j.Logger;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -16,13 +22,22 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
 
-    public PatientService(PatientRepository patientRepository) {
+    private final IndustriesSettingsProviderPort industriesSettingsProviderPort;
+
+    public PatientService(PatientRepository patientRepository, IndustriesSettingsProviderPort industriesSettingsProviderPort) {
         this.patientRepository = patientRepository;
+        this.industriesSettingsProviderPort = industriesSettingsProviderPort;
     }
 
     public Mono<List<PatientDataRepresentation>> find(String accountId) {
         LOGGER.info("Finding patients data for account id: {}", accountId);
 
+        return fetchSettings(accountId)
+                .flatMap(settings -> findPatientsWithSettings(accountId, settings));
+    }
+
+    @NonNull
+    public Mono<List<PatientDataRepresentation>> findPatientsWithSettings(String accountId, IntegrationGeneric integrationGeneric) {
         Mono<List<PatientDataRepresentation>> result =
                 patientRepository.findByAccountId(accountId)
                         .doOnSubscribe(subscription -> LOGGER.info("Subscribed to patient repository for accountId={}", accountId))
@@ -32,7 +47,7 @@ public class PatientService {
                                     it.id(),
                                     it.name(),
                                     "%s/%s".formatted(it.accountId(), it.externalId()),
-                                    null
+                                    integrationGeneric.subscriptionKey() + " <---> " + integrationGeneric.environment()
                             );
 
                             LOGGER.debug("Mapped patient to DTO: {}", dto);
@@ -44,7 +59,27 @@ public class PatientService {
 
                         .collectList()
                         .doOnSuccess(list -> LOGGER.info("Returning {} patient(s) for accountId={}", list.size(), accountId));
-
         return result;
     }
+
+    public Mono<IntegrationGeneric> fetchSettings(String accountId) {
+        ConfigurationRequest settingsRequest =
+                ConfigurationRequest.standardWithAccountId(
+                        new BearerTokenCredentials("token-for-%s".formatted(accountId)),
+                        "my-service",
+                        ConfigurationType.ACCOUNT,
+                        accountId,
+                        accountId
+                );
+
+        return industriesSettingsProviderPort
+                .getSettings(settingsRequest, IntegrationGeneric.class)
+                .doOnSuccess(settings ->
+                        LOGGER.debug("Settings fetched successfully for accountId={}", accountId)
+                )
+                .doOnError(e ->
+                        LOGGER.error("Failed to fetch settings for accountId={}", accountId, e)
+                );
+    }
+
 }
