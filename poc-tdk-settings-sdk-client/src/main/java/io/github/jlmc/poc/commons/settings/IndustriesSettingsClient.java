@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * IndustriesSettingsClient provides a type-safe client for interacting with the Industries Settings API.
  */
-public class IndustriesSettingsClient {
+public class IndustriesSettingsClient implements AutoCloseable {
 
     //public static final String SETTINGS_CONFIGURATIONS_PATH = "industries-settings/configurations";
     //public static final String SETTINGS_CONFIGURATIONS_PATH = "configurations/1/my-service/account";
@@ -132,5 +132,15 @@ public class IndustriesSettingsClient {
         }
 
         return path.build();
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.httpExecutionStrategy != null) {
+            this.httpExecutionStrategy.close();
+        }
+        if (distributedConfigProvider != null) {
+            this.distributedConfigProvider.close();
+        }
     }
 }

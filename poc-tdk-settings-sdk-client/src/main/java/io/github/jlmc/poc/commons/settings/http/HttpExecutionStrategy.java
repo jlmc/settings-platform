@@ -9,7 +9,7 @@ package io.github.jlmc.poc.commons.settings.http;
  * This interface abstracts the underlying HTTP client and allows
  * reusable execution strategies across multiple domains.
  */
-public interface HttpExecutionStrategy {
+public interface HttpExecutionStrategy extends AutoCloseable {
 
     /**
      * Executes an HTTP request and returns the response body as a string.

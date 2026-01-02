@@ -201,4 +201,9 @@ public class DefaultClientHttpExecutor implements ClientHttpExecutor {
     private static String encode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
+
+    @Override
+    public void close() {
+        this.httpClient.close();
+    }
 }

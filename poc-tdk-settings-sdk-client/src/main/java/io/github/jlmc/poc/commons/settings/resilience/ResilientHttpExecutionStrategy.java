@@ -1,6 +1,5 @@
 package io.github.jlmc.poc.commons.settings.resilience;
 
-
 import io.github.jlmc.poc.commons.settings.http.ClientHttpExecutor;
 import io.github.jlmc.poc.commons.settings.http.ClientHttpRequest;
 import io.github.jlmc.poc.commons.settings.http.DefaultClientHttpExecutor;
@@ -59,5 +58,10 @@ public class ResilientHttpExecutionStrategy implements HttpExecutionStrategy {
     private String performRequest(ClientHttpRequest request) {
         String body = clientHttpExecutor.send(request).body();
         return body != null ? body : "";
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.clientHttpExecutor.close();
     }
 }
