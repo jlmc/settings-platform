@@ -134,4 +134,11 @@ public class IndustriesSettingsClient {
         return path.build();
     }
 
+    public RedisExecutionStrategy redisExecutionStrategy() {
+        return redisExecutionStrategy;
+    }
+
+    public JsonDeserializer jsonDeserializer() {
+        return jsonDeserializer;
+    }
 }

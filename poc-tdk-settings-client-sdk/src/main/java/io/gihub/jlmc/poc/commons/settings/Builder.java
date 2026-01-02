@@ -6,6 +6,7 @@ import io.gihub.jlmc.poc.commons.settings.http.HttpExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.gihub.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
+import io.gihub.jlmc.poc.commons.settings.redis.sdk.defaults.JacksonObjectNodeMerger;
 import io.gihub.jlmc.poc.commons.settings.resilience.ResilientHttpExecutionStrategy;
 import io.gihub.jlmc.poc.commons.settings.resilience.RetryExecutor;
 import io.gihub.jlmc.poc.commons.settings.token.AccessTokenProvider;
@@ -64,6 +65,11 @@ public class Builder {
 
     public Builder useRetryExecutor(boolean value) {
         this.useRetryExecutor = value;
+        return this;
+    }
+
+    public Builder redisExecutionStrategy(RedisExecutionStrategy value) {
+        this.redisExecutionStrategy = value;
         return this;
     }
 
@@ -239,13 +245,13 @@ public class Builder {
                 );
             }
 
+            ObjectMapper andRegisterModules = new ObjectMapper().findAndRegisterModules();
             return RedisExecutionStrategy.createDefault(
                     jsonDeserializer,
                     redisAddress,
                     redisPassword,
-                    cluster,
-                    namespace,
-                    accountIdProvider
+                    accountIdProvider,
+                    new JacksonObjectNodeMerger(andRegisterModules)
             );
         }
     }

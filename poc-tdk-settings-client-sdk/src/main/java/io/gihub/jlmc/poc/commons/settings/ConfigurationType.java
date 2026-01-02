@@ -1,5 +1,6 @@
 package io.gihub.jlmc.poc.commons.settings;
 
+// TODO: move to sdk module
 public enum ConfigurationType {
     SERVICE(1),
     ACCOUNT(2),

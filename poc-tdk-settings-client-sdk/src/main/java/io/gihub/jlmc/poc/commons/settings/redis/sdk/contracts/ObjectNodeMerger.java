@@ -1,0 +1,14 @@
+package io.gihub.jlmc.poc.commons.settings.redis.sdk.contracts;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public interface ObjectNodeMerger {
+
+    ObjectNode mergeContents(List<Supplier<ObjectNode>> sources);
+    Map<String, Object> mergeContentsAsMap(List<Supplier<ObjectNode>> sources);
+
+}

@@ -68,7 +68,7 @@ public class PatientService {
                         new BearerTokenCredentials("token-for-%s".formatted(accountId)),
                         "my-service",
                         ConfigurationType.ACCOUNT,
-                        accountId,
+                        null,
                         accountId
                 );
 
