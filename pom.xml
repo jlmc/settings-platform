@@ -31,7 +31,7 @@
         <module>settings-client</module>
 
         <!-- Spring Boot Starter to facilitate the integration of the Client SDK in Spring Boot applications -->
-        <module>poc-tdk-settings-sdk-client-spring-boot-starter</module>
+        <module>settings-client-spring-boot-starter</module>
 
         <!-- Example Spring WebFlux application that uses the Client SDK -->
         <module>settings-webflux-app-example</module>
