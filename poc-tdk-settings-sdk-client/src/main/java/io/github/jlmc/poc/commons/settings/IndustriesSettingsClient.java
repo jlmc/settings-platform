@@ -7,7 +7,7 @@ import io.github.jlmc.poc.commons.settings.http.HttpExecutionStrategy;
 import io.github.jlmc.poc.commons.settings.http.HttpMethod;
 import io.github.jlmc.poc.commons.settings.http.UrlBuilder;
 import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
-import io.github.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
+import io.github.jlmc.poc.commons.settings.redis.DistributedConfigProvider;
 import io.github.jlmc.poc.commons.settings.token.AccessTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class IndustriesSettingsClient {
     private final AccessTokenProvider accessTokenProvider;
     private final JsonDeserializer jsonDeserializer;
     private final Duration requestTimeout;
-    private final RedisExecutionStrategy redisExecutionStrategy;
+    private final DistributedConfigProvider distributedConfigProvider;
 
     protected IndustriesSettingsClient(
             String apiBaseUrl,
@@ -40,14 +40,14 @@ public class IndustriesSettingsClient {
             AccessTokenProvider accessTokenProvider,
             JsonDeserializer jsonDeserializer,
             Duration requestTimeout,
-            RedisExecutionStrategy redisExecutionStrategy
+            DistributedConfigProvider distributedConfigProvider
     ) {
         this.apiBaseUrl = apiBaseUrl;
         this.httpExecutionStrategy = httpExecutionStrategy;
         this.accessTokenProvider = accessTokenProvider;
         this.jsonDeserializer = jsonDeserializer;
         this.requestTimeout = requestTimeout;
-        this.redisExecutionStrategy = redisExecutionStrategy;
+        this.distributedConfigProvider = distributedConfigProvider;
     }
 
     public static Builder builder() {
@@ -61,8 +61,8 @@ public class IndustriesSettingsClient {
 
         T result = null;
 
-        if (redisExecutionStrategy != null) {
-            result = redisExecutionStrategy.getOrNull(configurationRequest, responseType);
+        if (distributedConfigProvider != null) {
+            result = distributedConfigProvider.getOrNull(configurationRequest, responseType);
         }
 
         if (result == null) {
@@ -132,13 +132,5 @@ public class IndustriesSettingsClient {
         }
 
         return path.build();
-    }
-
-    public RedisExecutionStrategy redisExecutionStrategy() {
-        return redisExecutionStrategy;
-    }
-
-    public JsonDeserializer jsonDeserializer() {
-        return jsonDeserializer;
     }
 }

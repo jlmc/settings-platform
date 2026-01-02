@@ -5,8 +5,8 @@ import io.github.jlmc.poc.commons.settings.ConfigurationRequest;
 import io.github.jlmc.poc.commons.settings.IndustriesSettingsClient;
 import io.github.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
 import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
-import io.github.jlmc.poc.commons.settings.redis.DefaultRedisExecutionStrategy;
-import io.github.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
+import io.github.jlmc.poc.commons.settings.redis.DistributedConfigProvider;
+import io.github.jlmc.poc.commons.settings.redis.RedisDistributedConfigProvider;
 import io.github.jlmc.poc.commons.settings.redis.RedisSettingsProvider;
 import io.github.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
 import io.github.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
@@ -33,10 +33,10 @@ public class SettingsConfiguration {
     public IndustriesSettingsClient industriesSettingsClient(
             SettingsConfigurationProperties properties,
             JsonDeserializer jsonDeserializer,
-            ObjectProvider<RedisExecutionStrategy> redisExecutionStrategyProvider
+            ObjectProvider<DistributedConfigProvider> redisExecutionStrategyProvider
     ) {
 
-        RedisExecutionStrategy redisExecutionStrategy = redisExecutionStrategyProvider.getIfAvailable();
+        DistributedConfigProvider distributedConfigProvider = redisExecutionStrategyProvider.getIfAvailable();
 
         IndustriesSettingsClient industriesSettingsClient =
                 IndustriesSettingsClient.builder()
@@ -44,7 +44,7 @@ public class SettingsConfiguration {
                         .jsonDeserializer(jsonDeserializer)
                         .useRetryExecutor(false)
                         .userAgent("tdk-l1-l2-app-webflux")
-                        .redisExecutionStrategy(redisExecutionStrategy)
+                        .redisExecutionStrategy(distributedConfigProvider)
                         .build();
 
         return industriesSettingsClient;
@@ -72,7 +72,8 @@ public class SettingsConfiguration {
                 redisClient,
                 properties.namespace(),
                 properties.redisL1Ttl().toMinutes(),
-                TimeUnit.MINUTES);
+                TimeUnit.MINUTES,
+                properties.redisL1MaxSize());
     }
 
     @Bean
@@ -92,7 +93,7 @@ public class SettingsConfiguration {
             org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.class})
     @ConditionalOnProperty(prefix = "tdk.configurations-settings", name = "redis-enabled", havingValue = "true")
     @ConditionalOnMissingBean
-    public RedisExecutionStrategy redisExecutionStrategy(
+    public DistributedConfigProvider redisExecutionStrategy(
             SettingsConfigurationProperties properties,
             RedisSettingsProvider redisSettingsProvider,
             JsonDeserializer jsonDeserializer,
@@ -104,7 +105,7 @@ public class SettingsConfiguration {
 
         ResolvedConfigurationAssembler resolvedConfigurationAssembler = ResolvedConfigurationAssembler.defaultAssembler(objectMapper);
 
-        return new DefaultRedisExecutionStrategy(
+        return new RedisDistributedConfigProvider(
                 redisSettingsProvider,
                 keyBuilder,
                 jsonDeserializer,

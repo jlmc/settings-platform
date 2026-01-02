@@ -15,6 +15,7 @@ public record SettingsConfigurationProperties(
         @DefaultValue("settings") String namespace,
         @DefaultValue("true") boolean redisEnabled,
         @DefaultValue("PT10H") Duration redisL1Ttl,
+        @DefaultValue("1000") long redisL1MaxSize,
         List<String> services
 ) {
 }

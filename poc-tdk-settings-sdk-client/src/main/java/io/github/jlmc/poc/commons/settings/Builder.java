@@ -5,7 +5,7 @@ import io.github.jlmc.poc.commons.settings.http.HttpConstants;
 import io.github.jlmc.poc.commons.settings.http.HttpExecutionStrategy;
 import io.github.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
 import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
-import io.github.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
+import io.github.jlmc.poc.commons.settings.redis.DistributedConfigProvider;
 import io.github.jlmc.poc.commons.settings.resilience.ResilientHttpExecutionStrategy;
 import io.github.jlmc.poc.commons.settings.resilience.RetryExecutor;
 import io.github.jlmc.poc.commons.settings.token.AccessTokenProvider;
@@ -27,7 +27,7 @@ public class Builder {
     private RetryExecutor retryExecutor; // TODO: initialize with defaultRetryExecutor()
     private HttpExecutionStrategy httpExecutionStrategy;
     private AccessTokenProvider accessTokenProvider;
-    private RedisExecutionStrategy redisExecutionStrategy;
+    private DistributedConfigProvider distributedConfigProvider;
     private boolean useRetryExecutor = false; // TODO: change to true once defaultRetryExecutor is implemented
 
     public Builder apiBaseUrl(String value) {
@@ -65,8 +65,8 @@ public class Builder {
         return this;
     }
 
-    public Builder redisExecutionStrategy(RedisExecutionStrategy value) {
-        this.redisExecutionStrategy = value;
+    public Builder redisExecutionStrategy(DistributedConfigProvider value) {
+        this.distributedConfigProvider = value;
         return this;
     }
 
@@ -113,7 +113,7 @@ public class Builder {
                 tokenProvider,
                 jsonDeserializer,
                 requestTimeout,
-                redisExecutionStrategy
+                distributedConfigProvider
         );
     }
 
