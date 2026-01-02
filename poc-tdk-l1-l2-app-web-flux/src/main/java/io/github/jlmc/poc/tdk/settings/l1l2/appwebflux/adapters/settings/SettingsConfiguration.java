@@ -7,7 +7,7 @@ import io.github.jlmc.poc.commons.settings.json.JacksonJsonDeserializer;
 import io.github.jlmc.poc.commons.settings.json.JsonDeserializer;
 import io.github.jlmc.poc.commons.settings.redis.DefaultRedisExecutionStrategy;
 import io.github.jlmc.poc.commons.settings.redis.RedisExecutionStrategy;
-import io.github.jlmc.poc.commons.settings.redis.RedisL1SimpleMap;
+import io.github.jlmc.poc.commons.settings.redis.RedisL1L2SimpleMap;
 import io.github.jlmc.poc.commons.settings.redis.keys.KeyBuilder;
 import io.github.jlmc.poc.commons.settings.redis.keys.StandardKeyBuilder;
 import io.github.jlmc.poc.settings.sdk.domain.ResolvedConfigurationAssembler;
@@ -20,6 +20,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableConfigurationProperties(SettingsConfigurationProperties.class)
@@ -92,7 +95,8 @@ public class SettingsConfiguration {
         }
 
         String namespace = properties.namespace();
-        RedisL1SimpleMap redisL1SimpleMap = new RedisL1SimpleMap(redisClient, namespace);
+        Duration duration = properties.redisL1Ttl();
+        RedisL1L2SimpleMap redisL1SimpleMap = new RedisL1L2SimpleMap(redisClient, namespace, duration.toMinutes(), TimeUnit.MINUTES);
 
         KeyBuilder keyBuilder = new StandardKeyBuilder(namespace, ConfigurationRequest::accountId);
 

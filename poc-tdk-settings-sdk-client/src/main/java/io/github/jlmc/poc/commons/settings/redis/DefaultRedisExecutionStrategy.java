@@ -10,12 +10,12 @@ import java.util.Map;
 
 public class DefaultRedisExecutionStrategy implements RedisExecutionStrategy {
 
-    private final RedisL1SimpleMap redisL1SimpleMap;
+    private final RedisL1L2SimpleMap redisL1SimpleMap;
     private final KeyBuilder keyBuilder;
     private final JsonDeserializer jsonDeserializer;
     private final ResolvedConfigurationAssembler resolvedConfigurationAssembler;
 
-    public DefaultRedisExecutionStrategy(RedisL1SimpleMap redisL1SimpleMap,
+    public DefaultRedisExecutionStrategy(RedisL1L2SimpleMap redisL1SimpleMap,
                                          KeyBuilder keyBuilder,
                                          JsonDeserializer jsonDeserializer,
                                          ResolvedConfigurationAssembler resolvedConfigurationAssembler) {

@@ -20,16 +20,26 @@
 
     <dependencies>
 
+        <!-- SDK Dependency -->
         <dependency>
             <groupId>io.github.jlmc</groupId>
             <artifactId>poc-tdk-settings-sdk</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- Lettuce Redis Client necessary if we really want to use redis -->
         <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
             <version>6.6.0.RELEASE</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <!-- Caffeine Cache if we really want to use Redis L1L2 with L1 Caffeine cache appropriated and recommended for production -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.2.3</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -185,7 +195,6 @@
                     </execution>
                 </executions>
             </plugin>
-
 
 
             <plugin>

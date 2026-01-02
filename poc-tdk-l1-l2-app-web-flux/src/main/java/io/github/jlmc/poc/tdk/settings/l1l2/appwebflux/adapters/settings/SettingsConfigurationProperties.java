@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.Duration;
 import java.util.List;
 
 @Validated
@@ -13,6 +14,7 @@ public record SettingsConfigurationProperties(
         @NotBlank String apiBaseUrl,
         @DefaultValue("settings") String namespace,
         @DefaultValue("true") boolean redisEnabled,
+        @DefaultValue("PT10H") Duration redisL1Ttl,
         List<String> services
 ) {
 }
