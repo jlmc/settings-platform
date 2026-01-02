@@ -68,6 +68,11 @@ public class RedisL1L2Caffeine implements AutoCloseable {
                 caffeineCache.invalidateAll();
                 LOGGER.debug("L1 Cache flushed to ensure synchronization.");
             }
+
+            @Override
+            public void onRedisDisconnected(RedisChannelHandler<?, ?> c) {
+                LOGGER.warn("Redis L2 connection lost. Application will attempt to recover...");
+            }
         });
 
         this.connection = client.connect();
