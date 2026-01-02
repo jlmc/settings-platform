@@ -1,4 +1,4 @@
-package io.github.jlmc.settings.client.spring;
+package io.github.jlmc.settings.client.springboot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -1,4 +1,4 @@
-package io.github.jlmc.settings.client.spring;
+package io.github.jlmc.settings.client.springboot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.jlmc.settings.client.Builder;
