@@ -28,7 +28,7 @@
         <module>settings-service</module>
 
         <!-- Client settings implementation, to be used in all apps that need to connect with the Server settings implementation -->
-        <module>poc-tdk-settings-sdk-client</module>
+        <module>settings-client</module>
 
         <!-- Spring Boot Starter to facilitate the integration of the Client SDK in Spring Boot applications -->
         <module>poc-tdk-settings-sdk-client-spring-boot-starter</module>
