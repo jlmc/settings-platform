@@ -38,16 +38,13 @@ public class SettingsConfiguration {
 
         DistributedConfigProvider distributedConfigProvider = redisExecutionStrategyProvider.getIfAvailable();
 
-        IndustriesSettingsClient industriesSettingsClient =
-                IndustriesSettingsClient.builder()
-                        .apiBaseUrl(properties.apiBaseUrl())
-                        .jsonDeserializer(jsonDeserializer)
-                        .useRetryExecutor(false)
-                        .userAgent("webflux-app-example")
-                        .redisExecutionStrategy(distributedConfigProvider)
-                        .build();
-
-        return industriesSettingsClient;
+        return IndustriesSettingsClient.builder()
+                .apiBaseUrl(properties.apiBaseUrl())
+                .jsonDeserializer(jsonDeserializer)
+                .useRetryExecutor(false)
+                .userAgent("webflux-app-example")
+                .redisExecutionStrategy(distributedConfigProvider)
+                .build();
     }
 
     @Bean
