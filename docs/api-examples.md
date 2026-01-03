@@ -27,22 +27,74 @@ Define the structure and validation rules for your service's configurations.
 curl -X PUT http://localhost/schemas \
   -H "Content-Type: application/json" \
   -d '{
-    "serviceName": "patient-service",
-    "jsonSchemas": [
-      {
-        "type": "ACCOUNT",
-        "value": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "type": "object",
-          "properties": {
-            "featureEnabled": { "type": "boolean" },
-            "maxRetries": { "type": "integer", "minimum": 0 }
-          },
-          "required": ["featureEnabled"]
+    "service_name": "my-service",
+    "rsa": null,
+    "json_schemas": [
+        {
+            "type": "ACCOUNT",
+            "schema_content": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "$id": "https://example.com/config.schema.json",
+                "title": "Subscription Configuration",
+                "type": "object",
+                "properties": {
+                    "subscriptionKey": {
+                        "type": "string",
+                        "description": "The unique API key for the subscription",
+                        "minLength": 1
+                    },
+                    "environment": {
+                        "type": "string",
+                        "description": "The target deployment environment",
+                        "enum": [
+                            "development",
+                            "staging",
+                            "production"
+                        ]
+                    }
+                },
+                "required": [
+                    "subscriptionKey",
+                    "environment"
+                ]
+            }
+        },
+        {
+            "type": "user",
+            "schema_content": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "$id": "https://example.com/config.schema.json",
+                "title": "Subscription Configuration",
+                "type": "object",
+                "properties": {
+                    "subscriptionKey": {
+                        "type": "string",
+                        "description": "The unique API key for the subscription",
+                        "minLength": 1
+                    },
+                    "environment": {
+                        "type": "string",
+                        "description": "The target deployment environment",
+                        "enum": [
+                            "development",
+                            "staging",
+                            "production"
+                        ]
+                    },
+                    "role": {
+                        "type": "string",
+                        "description": "The agent role",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "subscriptionKey",
+                    "environment"
+                ]
+            }
         }
-      }
     ]
-  }'
+}}'
 ```
 
 ### 2. Get Service Schema
