@@ -35,10 +35,10 @@ docker compose --profile apps up -d
 
 Once started, the services are available through the API Gateway at `http://localhost`:
 - **Settings Service**:
-    - `http://localhost/schemas/`
-    - `http://localhost/settings/`
-    - `http://localhost/configurations/`
-- **WebFlux Example App**: `http://localhost/hls/{account_id}/patients/data`
+    - `http://localhost/settings-service/schemas/`
+    - `http://localhost/settings-service/settings/`
+    - `http://localhost/settings-service/configurations/`
+- **WebFlux Example App**: `http://localhost/example-app/hls/{account_id}/patients/data`
 - **Gateway Health**: `http://localhost/health`
 
 For detailed `curl` examples, see **[API Usage Examples](./docs/api-examples.md)**.

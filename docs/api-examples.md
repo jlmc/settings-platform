@@ -24,9 +24,9 @@ The Settings Service manages schemas, settings, and configuration resolution.
 Define the structure and validation rules for your service's configurations.
 
 ```bash
-curl -X PUT http://localhost/schemas \
-  -H "Content-Type: application/json" \
-  -d '{
+curl -L -X PUT 'http://localhost/settings-service/schemas' \
+-H 'Content-Type: application/json' \
+-d '{
     "service_name": "my-service",
     "rsa": null,
     "json_schemas": [
@@ -94,40 +94,52 @@ curl -X PUT http://localhost/schemas \
             }
         }
     ]
-}}'
+}' | jq .
+```
+
+### 2. Define Settings
+Set configuration values for a specific account and service.
+
+```bash
+curl -L -X PUT 'http://localhost/settings-service/settings/1/my-service/AGENT' \
+-H 'Content-Type: application/json' \
+-d '{
+    "subscriptionKey": "22-agent",
+    "environment": "production"
+}' | jq .
 ```
 
 ### 2. Get Service Schema
 Retrieve the defined schemas for a specific service.
 
 ```bash
-curl -i http://localhost/schemas/patient-service
+curl -L 'http://localhost/settings-service/schemas/my-service' | jq .
 ```
 
 ### 3. Define Settings
 Set configuration values for a specific account and service.
 
 ```bash
-curl -X PUT http://localhost/settings/ACC123/patient-service/ACCOUNT \
-  -H "Content-Type: application/json" \
-  -d '{
-    "featureEnabled": true,
-    "maxRetries": 5
-  }'
+curl -L -X PUT 'http://localhost/settings-service/settings/1/my-service/ACCOUNT' \
+-H 'Content-Type: application/json' \
+-d '{
+    "subscriptionKey": "22-agent",
+    "environment": "production"
+}' | jq .
 ```
 
 ### 4. Get Settings
 Retrieve the specific settings for an account/service/level.
 
 ```bash
-curl -i http://localhost/settings/ACC123/patient-service/ACCOUNT
+curl -L 'http://localhost/settings-service/settings/1/my-service/account' | jq .
 ```
 
 ### 5. Resolve Configuration
 Resolve the final configuration by merging hierarchical levels (Account, Service, etc.).
 
 ```bash
-curl -i http://localhost/configurations/ACC123/patient-service/ACCOUNT
+curl -L 'http://localhost/settings-service/configurations/1/my-service/account' | jq .
 ```
 
 ---
@@ -140,7 +152,7 @@ The example application demonstrates how a microservice consumes settings via th
 Retrieve patient data for a specific account. This endpoint internally uses the Settings SDK to fetch configurations.
 
 ```bash
-curl -i http://localhost/hls/ACC123/patients/data
+curl -L 'http://localhost/example-app/hls/1/patients/data' | jq .
 ```
 
 ---
@@ -150,7 +162,7 @@ curl -i http://localhost/hls/ACC123/patients/data
 ### Using jq
 Pipe your `curl` output to `jq` for better readability:
 ```bash
-curl -s http://localhost/schemas/patient-service | jq .
+curl -s http://localhost/settings-service/schemas/patient-service | jq .
 ```
 
 ### Verbose Output
