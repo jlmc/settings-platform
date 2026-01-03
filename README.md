@@ -21,17 +21,37 @@ The project is organized into several modules:
 
 ### Infrastructure Setup
 
-Use the provided `docker-compose.yaml` to start the required infrastructure:
+The project uses Docker Compose profiles to manage different sets of services:
+
+- **`dev` (default)**: Starts basic infrastructure (Redis, MongoDB).
+- **`apps`**: Starts the infrastructure, the application services (`settings-service`, `settings-webflux-app-example`), and an **API Gateway**.
+- **`full`**: Starts all available services, including Kafka, LocalStack, and RabbitMQ.
+
+To start the applications and their required infrastructure:
 
 ```bash
-docker-compose up -d
+docker compose --profile apps up -d
 ```
 
-This will start:
-- **MongoDB**: Primary storage for the settings service.
-- **Redis**: Shared cache and synchronization.
-- **RabbitMQ**: Messaging (if used by specific components).
-- **WireMock**: For mocking external dependencies in tests.
+Once started, the services are available through the API Gateway at `http://localhost`:
+- **Settings Service**:
+    - `http://localhost/schemas/`
+    - `http://localhost/settings/`
+    - `http://localhost/configurations/`
+- **WebFlux Example App**: `http://localhost/hls/{account_id}/patients/data`
+- **Gateway Health**: `http://localhost/health`
+
+For detailed `curl` examples, see **[API Usage Examples](./docs/api-examples.md)**.
+
+Alternatively, you can access them directly:
+- **Settings Service**: `http://localhost:8080`
+- **WebFlux Example App**: `http://localhost:8081`
+
+To start only the basic infrastructure:
+
+```bash
+docker compose up -d
+```
 
 ### Building the Project
 

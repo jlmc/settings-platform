@@ -20,11 +20,24 @@ The `settings-service` is a Spring Boot application that provides a RESTful API 
 
 ### Running the Application
 
+#### Using Maven
 ```bash
 mvn spring-boot:run
 ```
 
 By default, the service starts on port `8080`.
+
+#### Using Docker
+To build the Docker image, run the following command from the **root directory** of the project:
+
+```bash
+docker build -t settings-service -f settings-service/Dockerfile .
+```
+
+To run the container:
+```bash
+docker run -p 8080:8080 settings-service
+```
 
 ### Configuration
 

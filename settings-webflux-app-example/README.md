@@ -17,11 +17,24 @@ A sample Spring WebFlux application demonstrating the integration and usage of t
 
 ### Running the Application
 
+#### Using Maven
 ```bash
 mvn spring-boot:run
 ```
 
 The application will start on port `8081` (assuming default Spring Boot port is changed if running alongside the service).
+
+#### Using Docker
+To build the Docker image, run the following command from the **root directory** of the project:
+
+```bash
+docker build -t settings-webflux-app-example -f settings-webflux-app-example/Dockerfile .
+```
+
+To run the container:
+```bash
+docker run -p 8081:8081 settings-webflux-app-example
+```
 
 ## 🛠️ Configuration
 
