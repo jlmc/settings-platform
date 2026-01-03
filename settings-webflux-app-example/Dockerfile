@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM maven:3.9.9-eclipse-temurin-17-alpine AS build
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -26,7 +26,7 @@ COPY settings-webflux-app-example/src settings-webflux-app-example/src
 RUN mvn clean install -DskipTests -pl settings-domain,settings-client,settings-webflux-app-example -am
 
 # Stage 2: Create the runtime image
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre
 
 # Set the working directory
 WORKDIR /app
