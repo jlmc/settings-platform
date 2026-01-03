@@ -11,33 +11,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
+import java.util.Objects;
 
 public abstract class AbstractRedisSettingsProvider implements RedisSettingsProvider {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
     protected final RedisClient client;
     protected final String namespace;
     protected final StatefulRedisConnection<String, String> connection;
 
     protected AbstractRedisSettingsProvider(RedisClient redisClient, String namespace) {
-        this.client = redisClient;
-        this.namespace = namespace;
+        this.client = Objects.requireNonNull(redisClient, "RedisClient cannot be null");
+        this.namespace = Objects.requireNonNull(namespace, "Namespace cannot be null");
 
+        // Force RESP3 for Server-Side Tracking support
         // 1. Mandatory: Force RESP3 for all implementations to support advanced features
         this.client.setOptions(ClientOptions.builder()
                 .protocolVersion(ProtocolVersion.RESP3)
                 .autoReconnect(true)
                 .build());
 
-        // 2. Setup Lifecycle Listener
+        // Setup Listener BEFORE connecting
         this.client.addListener(new RedisConnectionStateListener() {
             @Override
             public void onRedisConnected(RedisChannelHandler<?, ?> c, SocketAddress socketAddress) {
-                logger.info("Redis connected/reconnected at {}. [Namespace: {}]", socketAddress, namespace);
-                if (connection != null) {
-                    onReconnection();
-                }
+                logger.info("Redis connected at {}. [Namespace: {}]", socketAddress, namespace);
+                // Subclasses will re-enable tracking here
+                onReconnection();
             }
 
             @Override
@@ -49,9 +49,6 @@ public abstract class AbstractRedisSettingsProvider implements RedisSettingsProv
         this.connection = client.connect();
     }
 
-    /**
-     * Hook for subclasses to re-establish tracking or clear local caches upon reconnection.
-     */
     protected abstract void onReconnection();
 
     @Override
@@ -66,8 +63,14 @@ public abstract class AbstractRedisSettingsProvider implements RedisSettingsProv
 
     @Override
     public void close() {
-        if (connection != null && connection.isOpen()) {
+        logger.info("Closing Redis provider for namespace: {}", namespace);
+        if (connection != null) {
             connection.close();
+        }
+        // Important: Shutdown the client to release resources/Netty threads
+        // Note: Only do this if this provider 'owns' the client lifecycle.
+        if (client != null) {
+            client.shutdown();
         }
     }
 }

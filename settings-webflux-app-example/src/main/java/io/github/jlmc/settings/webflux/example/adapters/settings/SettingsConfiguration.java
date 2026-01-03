@@ -10,8 +10,8 @@ import io.github.jlmc.settings.client.redis.RedisDistributedConfigProvider;
 import io.github.jlmc.settings.client.redis.RedisSettingsProvider;
 import io.github.jlmc.settings.client.redis.keys.KeyBuilder;
 import io.github.jlmc.settings.client.redis.keys.StandardKeyBuilder;
-import io.github.jlmc.settings.client.redis.providers.RedisL1L2Caffeine;
-import io.github.jlmc.settings.client.redis.providers.RedisL2OnlyService;
+import io.github.jlmc.settings.client.redis.providers.RedisL1L2CaffeineProvider;
+import io.github.jlmc.settings.client.redis.providers.RedisL2OnlyProvider;
 import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
 import io.github.jlmc.settings.webflux.example.domain.ports.IndustriesSettingsProviderPort;
 import org.springframework.beans.factory.ObjectProvider;
@@ -62,13 +62,13 @@ public class SettingsConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "", name = "redis-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "settings.webflux-app.client", name = "redis-enabled", havingValue = "true")
     @ConditionalOnClass(com.github.benmanes.caffeine.cache.Cache.class)
     public RedisSettingsProvider redisL1L2CaffeineSettingsProvider(
             SettingsConfigurationProperties properties,
             RedisConnectionFactory connectionFactory) {
         io.lettuce.core.RedisClient redisClient = getRedisClient(connectionFactory);
-        return new RedisL1L2Caffeine(
+        return new RedisL1L2CaffeineProvider(
                 redisClient,
                 properties.namespace(),
                 properties.redisL1Ttl().toMinutes(),
@@ -77,13 +77,13 @@ public class SettingsConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "", name = "redis-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "settings.webflux-app.client", name = "redis-enabled", havingValue = "true")
     @ConditionalOnMissingBean(RedisSettingsProvider.class)
     public RedisSettingsProvider redisL2OnlySettingsProvider(
             SettingsConfigurationProperties properties,
             RedisConnectionFactory connectionFactory) {
         io.lettuce.core.RedisClient redisClient = getRedisClient(connectionFactory);
-        return new RedisL2OnlyService(redisClient, properties.namespace());
+        return new RedisL2OnlyProvider(redisClient, properties.namespace());
     }
 
     @Bean
@@ -91,7 +91,7 @@ public class SettingsConfiguration {
             RedisConnectionFactory.class,
             io.lettuce.core.RedisClient.class,
             org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.class})
-    @ConditionalOnProperty(prefix = "", name = "redis-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "settings.webflux-app.client", name = "redis-enabled", havingValue = "true")
     @ConditionalOnMissingBean
     public DistributedConfigProvider redisExecutionStrategy(
             SettingsConfigurationProperties properties,

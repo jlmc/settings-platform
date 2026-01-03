@@ -11,8 +11,8 @@ import io.github.jlmc.settings.client.redis.RedisDistributedConfigProvider;
 import io.github.jlmc.settings.client.redis.RedisSettingsProvider;
 import io.github.jlmc.settings.client.redis.keys.KeyBuilder;
 import io.github.jlmc.settings.client.redis.keys.StandardKeyBuilder;
-import io.github.jlmc.settings.client.redis.providers.RedisL1L2Caffeine;
-import io.github.jlmc.settings.client.redis.providers.RedisL2OnlyService;
+import io.github.jlmc.settings.client.redis.providers.RedisL1L2CaffeineProvider;
+import io.github.jlmc.settings.client.redis.providers.RedisL2OnlyProvider;
 import io.github.jlmc.settings.client.token.AccessTokenProvider;
 import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
 import org.springframework.beans.factory.ObjectProvider;
@@ -75,7 +75,7 @@ public class SettingsClientAutoConfiguration {
             SettingsClientProperties properties,
             RedisConnectionFactory connectionFactory) {
         io.lettuce.core.RedisClient redisClient = getRedisClient(connectionFactory);
-        return new RedisL1L2Caffeine(
+        return new RedisL1L2CaffeineProvider(
                 redisClient,
                 properties.getNamespace(),
                 properties.getRedisL1Ttl().toMinutes(),
@@ -91,7 +91,7 @@ public class SettingsClientAutoConfiguration {
             SettingsClientProperties properties,
             RedisConnectionFactory connectionFactory) {
         io.lettuce.core.RedisClient redisClient = getRedisClient(connectionFactory);
-        return new RedisL2OnlyService(redisClient, properties.getNamespace());
+        return new RedisL2OnlyProvider(redisClient, properties.getNamespace());
     }
 
     @Bean
