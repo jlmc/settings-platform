@@ -19,42 +19,16 @@
     </properties>
 
     <dependencies>
-
-        <!-- SDK Dependency -->
         <dependency>
+            <!-- Mandatory: settings domain contain the domain entities and components shared between service and client -->
             <groupId>io.github.jlmc</groupId>
             <artifactId>settings-domain</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- Lettuce Redis Client necessary if we really want to use redis -->
         <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>6.6.0.RELEASE</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <!-- Caffeine Cache if we really want to use Redis L1L2 with L1 Caffeine cache appropriated and recommended for production -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>3.2.3</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Compile-only dependencies (provided at runtime) -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.16</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Jackson -->
-        <dependency>
+            <!-- Mandatory:  The applications communications depends on jackson for serialize and deserialize the network payloads, and for merging the shared entities -->
+            <!-- when the application run spring-boot 4 the provided jackson version is going to be 3.x.x that have breaking changes -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
@@ -62,9 +36,43 @@
             <optional>true</optional>
         </dependency>
 
-
-        <!-- Nimbus JOSE + JWT -->
         <dependency>
+            <!-- Optional: Lettuce Redis Client.
+            Necessary if we really want to use redis for caching the settings and reduce the latency and traffic network.
+            The application using this client must provide the lettuce dependency at runtime.
+            This module provides 3 RedisSettingsProvider implementations.
+            1. RedisL2OnlyProvider: uses only Redis as cache layer, no cache on the client app.
+            2. RedisL1L2SimpleMapProvider: uses a simple ConcurrentHashMap as L1 cache and Redis as L2 cache.
+            3. RedisL1L2CaffeineProvider: uses Caffeine Cache as L1 cache and Redis as L2 cache.
+            For example the spring boot application can provide it by adding the spring-boot-starter-data-redis dependency, means that this dependency will be already resolved.
+            -->
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.6.0.RELEASE</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <!-- Optional: Caffeine Cache.
+            Caffeine Cache if we really want to use Redis L1L2 with L1 Caffeine cache appropriated and recommended for production.
+            This module provides 3 RedisSettingsProvider implementations.
+            The Caffeine dependency must be provided when we want to use the Caffeine L1 cache, provided by the RedisL1L2CaffeineProvider.
+            -->
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.2.3</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <!-- Optional: Nimbus JOSE + JWT
+            Only necessary when we want to use  JWT tokens for authentication and authorization, provider by the PrivilegedCredentialsStrategy. Otherwise, not necessary. However, most applications will use JWT tokens, and the dependency will be already resolved.
+            Necessary if we want to use JWT tokens for authentication and authorization when communicating with the Settings Service.
+            The application using this client must provide the nimbus-jose-jwt dependency at runtime.
+            For example the spring boot application can provide it by adding the spring-boot-starter-oauth2-resource-server dependency, means that this dependency will be already resolved.
+            -->
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>10.5</version>
@@ -72,12 +80,28 @@
             <optional>true</optional>
         </dependency>
 
+
         <dependency>
+            <!-- Optional: Resilience4jRetry module.
+            Necessary if we want to use Resilience4jRetry mechanism for retrying failed requests to the Settings Service.
+            This library provides a feature-flag `useRetryExecutor` (which we can define on the builder) that defined if we want to use retry mechanism or not for http request executions. If the flag is true, and we not provide your own RetryExecutor implementation, the Resilience4jRetryExecutor is going to be used, but only if the dependency is on the classpath.
+            The application using this client must provide the resilience4j-retry dependency at runtime.
+            For example the spring boot application can provide it by adding the resilience4j-spring-boot3 dependency, means that this dependency will be already resolved.
+            -->
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-retry</artifactId>
             <version>2.2.0</version>
             <optional>true</optional>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <!-- Optional: Logging Compile-only dependencies (provided at runtime) -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.16</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- tests dependencies -->
@@ -124,12 +148,12 @@
         </dependency>
 
         <dependency>
+            <!--- Logging test implementation -->
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.5.23</version>
             <scope>test</scope>
         </dependency>
-
 
         <!-- integration tests dependencies -->
         <dependency>
@@ -138,22 +162,21 @@
             <version>3.11.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>3.0.3</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
-
+        -->
     </dependencies>
-
 
     <build>
         <plugins>
@@ -233,8 +256,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
         </plugins>
     </build>
 

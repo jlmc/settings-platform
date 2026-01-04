@@ -3,11 +3,9 @@ package io.github.jlmc.settings.client.auth;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Represents OAuth2 client credentials for performing token-based authentication.
- *
- * The '/oauth/token' path will be appended automatically when requesting tokens.
- */
+/// Represents OAuth2 client credentials for performing token-based authentication.
+///
+/// The '/oauth/token' path will be appended automatically when requesting tokens.
 public record ClientCredentials(
         String clientId,
         String clientSecret,
