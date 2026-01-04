@@ -28,7 +28,7 @@ The application will start on port `8081` (assuming default Spring Boot port is 
 To build the Docker image, run the following command from the **root directory** of the project:
 
 ```bash
-docker build -t settings-webflux-app-example -f settings-webflux-app-example/Dockerfile .
+docker build -t settings-webflux-app-example -f settings-platform-apps-examples/settings-webflux-app-example/Dockerfile .
 ```
 
 To run the container:

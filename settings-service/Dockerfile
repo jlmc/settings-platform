@@ -10,7 +10,8 @@ COPY settings-domain/pom.xml settings-domain/
 COPY settings-service/pom.xml settings-service/
 COPY settings-client/pom.xml settings-client/
 COPY settings-client-spring-boot-starter/pom.xml settings-client-spring-boot-starter/
-COPY settings-webflux-app-example/pom.xml settings-webflux-app-example/
+COPY settings-platform-apps-examples/pom.xml settings-platform-apps-examples/
+COPY settings-platform-apps-examples/settings-webflux-app-example/pom.xml settings-platform-apps-examples/settings-webflux-app-example/
 
 # Download dependencies (this step will be cached unless poms change)
 RUN mvn dependency:go-offline -B

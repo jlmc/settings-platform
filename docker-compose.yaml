@@ -354,7 +354,7 @@ services:
   settings-webflux-app-example:
     build:
       context: .
-      dockerfile: settings-webflux-app-example/Dockerfile
+      dockerfile: settings-platform-apps-examples/settings-webflux-app-example/Dockerfile
     container_name: settings-webflux-app-example
     profiles:
       - apps

@@ -10,7 +10,7 @@ The project is organized into several modules:
 - **[`settings-service`](./settings-service)**: Spring Boot server application providing a REST API for configuration management and resolution.
 - **[`settings-client`](./settings-client)**: Java/Kotlin SDK for interacting with the settings service, featuring advanced L1/L2 caching.
 - **[`settings-client-spring-boot-starter`](./settings-client-spring-boot-starter)**: Spring Boot Starter for seamless integration of the SDK.
-- **[`settings-webflux-app-example`](./settings-webflux-app-example)**: A sample application demonstrating the platform's usage.
+- **[`settings-webflux-app-example`](./settings-platform-apps-examples/settings-webflux-app-example)**: A sample application demonstrating the platform's usage.
 
 ## 🚀 Getting Started
 

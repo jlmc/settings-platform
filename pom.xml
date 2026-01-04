@@ -33,9 +33,6 @@
         <!-- Spring Boot Starter to facilitate the integration of the Client SDK in Spring Boot applications -->
         <module>settings-client-spring-boot-starter</module>
 
-        <!-- Example Spring WebFlux application that uses the Client SDK -->
-        <module>settings-webflux-app-example</module>
-
         <!-- Additional examples can be added here -->
         <module>settings-platform-apps-examples</module>
     </modules>

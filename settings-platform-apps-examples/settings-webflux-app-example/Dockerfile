@@ -10,7 +10,8 @@ COPY settings-domain/pom.xml settings-domain/
 COPY settings-service/pom.xml settings-service/
 COPY settings-client/pom.xml settings-client/
 COPY settings-client-spring-boot-starter/pom.xml settings-client-spring-boot-starter/
-COPY settings-webflux-app-example/pom.xml settings-webflux-app-example/
+COPY settings-platform-apps-examples/pom.xml settings-platform-apps-examples/
+COPY settings-platform-apps-examples/settings-webflux-app-example/pom.xml settings-platform-apps-examples/settings-webflux-app-example/
 
 # Download dependencies (this step will be cached unless poms change)
 RUN mvn dependency:go-offline -B
@@ -18,12 +19,12 @@ RUN mvn dependency:go-offline -B
 # Copy the source code for all required modules
 COPY settings-domain/src settings-domain/src
 COPY settings-client/src settings-client/src
-COPY settings-webflux-app-example/src settings-webflux-app-example/src
+COPY settings-platform-apps-examples/settings-webflux-app-example/src settings-platform-apps-examples/settings-webflux-app-example/src
 
 # Build the application and its local dependencies
 # We only need to install settings-domain and settings-client to the local repo
 # so that settings-webflux-app-example can find them.
-RUN mvn clean install -DskipTests -pl settings-domain,settings-client,settings-webflux-app-example -am
+RUN mvn clean install -DskipTests -pl settings-domain,settings-client,settings-platform-apps-examples/settings-webflux-app-example -am
 
 # Stage 2: Create the runtime image
 FROM eclipse-temurin:21-jre
@@ -32,7 +33,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy the built jar from the build stage
-COPY --from=build /app/settings-webflux-app-example/target/*.jar app.jar
+COPY --from=build /app/settings-platform-apps-examples/settings-webflux-app-example/target/*.jar app.jar
 
 # Expose the port the app runs on
 EXPOSE 8081
