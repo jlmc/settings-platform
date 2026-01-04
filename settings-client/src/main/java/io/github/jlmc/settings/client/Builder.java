@@ -1,6 +1,7 @@
 package io.github.jlmc.settings.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.jlmc.settings.client.auth.AuthCredentials;
 import io.github.jlmc.settings.client.http.HttpConstants;
 import io.github.jlmc.settings.client.http.HttpExecutionStrategy;
 import io.github.jlmc.settings.client.json.JacksonJsonDeserializer;
@@ -13,11 +14,13 @@ import io.github.jlmc.settings.client.token.AccessTokenProvider;
 import io.github.jlmc.settings.client.token.BearerTokenStrategy;
 import io.github.jlmc.settings.client.token.ClientCredentialsStrategy;
 import io.github.jlmc.settings.client.token.PrivilegedCredentialsStrategy;
+import io.github.jlmc.settings.client.token.TokenAcquisitionStrategy;
 import io.github.jlmc.settings.client.token.TokenOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Builder {
@@ -29,11 +32,11 @@ public class Builder {
     private Duration requestTimeout = HttpConstants.DEFAULT_REQUEST_TIMEOUT;
     private String userAgent = "industries-settings-client-java";
     private JsonDeserializer jsonDeserializer = defaultJsonDeserializer();
-    private RetryExecutor retryExecutor; // TODO: initialize with defaultRetryExecutor()
+    private RetryExecutor retryExecutor;
     private HttpExecutionStrategy httpExecutionStrategy;
     private AccessTokenProvider accessTokenProvider;
     private DistributedConfigProvider distributedConfigProvider;
-    private boolean useRetryExecutor = false; // TODO: change to true once defaultRetryExecutor is implemented
+    private boolean useRetryExecutor = false;
 
     public Builder apiBaseUrl(String value) {
         this.apiBaseUrl = value;
@@ -104,13 +107,7 @@ public class Builder {
         AccessTokenProvider tokenProvider =
                 accessTokenProvider != null
                         ? accessTokenProvider
-                        : new TokenOrchestrator(
-                            List.of(
-                                new BearerTokenStrategy(),
-                                new ClientCredentialsStrategy(httpStrategy, jsonDeserializer),
-                                new PrivilegedCredentialsStrategy(httpStrategy, jsonDeserializer)
-                        )
-                );
+                        : lazyDefaultAccessTokenProvider(httpStrategy);
 
         return new IndustriesSettingsClient(
                 apiBaseUrl,
@@ -120,6 +117,35 @@ public class Builder {
                 requestTimeout,
                 distributedConfigProvider
         );
+    }
+
+
+    private AccessTokenProvider lazyDefaultAccessTokenProvider(HttpExecutionStrategy httpStrategy) {
+        // Check if Nimbus JOSE JWT classes are on the classpath
+        boolean nimbusAvailable;
+        try {
+            Class.forName("com.nimbusds.jwt.SignedJWT");
+            Class.forName("com.nimbusds.jose.JWSHeader");
+            Class.forName("com.nimbusds.jose.crypto.ECDSASigner");
+            nimbusAvailable = true;
+            LOGGER.debug("Nimbus JOSE JWT library detected on classpath.");
+        } catch (ClassNotFoundException e) {
+            nimbusAvailable = false;
+            LOGGER.warn("Nimbus JOSE JWT library not found on classpath. PrivilegedCredentialsStrategy will not be added.");
+        }
+
+        List<TokenAcquisitionStrategy<? extends AuthCredentials>> strategies = new ArrayList<>();
+        strategies.add(new BearerTokenStrategy());
+        strategies.add(new ClientCredentialsStrategy(httpStrategy, jsonDeserializer));
+
+        if (nimbusAvailable) {
+            strategies.add(new PrivilegedCredentialsStrategy(httpStrategy, jsonDeserializer));
+            LOGGER.info("PrivilegedCredentialsStrategy added to TokenOrchestrator.");
+        } else {
+            LOGGER.info("TokenOrchestrator will be created without PrivilegedCredentialsStrategy.");
+        }
+
+        return new TokenOrchestrator(strategies);
     }
 
     private RetryExecutor retryExecutor() {
@@ -165,45 +191,4 @@ public class Builder {
         return new JacksonJsonDeserializer(objectMapper);
     }
 
-    /*
-    public static RetryExecutor defaultRetryExecutor() {
-        Set<Integer> retriableStatuses =
-                Set.of(
-                                HttpStatusCode.REQUEST_TIMEOUT,
-                                HttpStatusCode.INTERNAL_SERVER_ERROR,
-                                HttpStatusCode.BAD_GATEWAY,
-                                HttpStatusCode.SERVICE_UNAVAILABLE,
-                                HttpStatusCode.GATEWAY_TIMEOUT
-                        ).stream()
-                        .map(HttpStatusCode::getCode)
-                        .collect(Collectors.toSet());
-
-        RetryConfig<Object> config =
-                RetryConfig.custom()
-                        .maxAttempts(HttpConstants.DEFAULT_MAX_RETRIES)
-                        .intervalFunction(IntervalFunction.ofExponentialBackoff(200L, 2.0))
-                        .retryOnException(ex -> {
-                            if (ex instanceof SettingsClientException sce) {
-                                Throwable cause = sce.getCause();
-                                return cause instanceof HttpTimeoutException
-                                        || cause instanceof SocketTimeoutException
-                                        || cause instanceof ConnectException
-                                        || cause instanceof SocketException
-                                        || cause instanceof EOFException;
-                            }
-                            if (ex instanceof SettingsClientHttpException httpEx) {
-                                return retriableStatuses.contains(httpEx.getStatusCode());
-                            }
-                            return false;
-                        })
-                        .build();
-
-        Retry retry = Authenticator.Retry.of("industriesSettingsClientRetry", config);
-        return new Resilience4jRetryExecutor(retry);
-    }
-     */
-
-    /* =========================
-       Redis Builder
-       ========================= */
 }
