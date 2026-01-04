@@ -1,0 +1,97 @@
+package io.github.jlmc.settings.client.redis.providers;
+
+import io.lettuce.core.RedisClient;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@Testcontainers(disabledWithoutDocker = true)
+class RedisL2OnlyProviderIT {
+
+    // alternatively you can use the RedisContainer from Testcontainers library
+    // static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7.4.2-alpine"));
+    @SuppressWarnings("resource")
+    @Container
+    static GenericContainer<?> redis =
+            new GenericContainer<>(DockerImageName.parse("redis:7.4.2-alpine"))
+                    .withExposedPorts(6379);
+
+    private RedisL2OnlyProvider provider;
+    private RedisClient redisClient;
+
+    @BeforeEach
+    void setUp() {
+        String redisUri = String.format("redis://%s:%d", redis.getHost(), redis.getMappedPort(6379));
+        redisClient = RedisClient.create(redisUri);
+        provider = new RedisL2OnlyProvider(redisClient, "test-namespace");
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (provider != null) {
+            provider.close();
+        }
+    }
+
+    @Test
+    @DisplayName("Should return null when key does not exist")
+    void shouldReturnNullWhenKeyDoesNotExist() {
+        String value = provider.getValue("non-existent-key");
+
+        assertThat(value).isNull();
+    }
+
+    @Test
+    @DisplayName("Should return value when key exists in Redis")
+    void shouldReturnValueWhenKeyExists() {
+        String fullKey = "test-namespace:existing-key";
+        String expectedValue = "{\"name\":\"test\"}";
+        redisClient.connect().sync().set(fullKey, expectedValue);
+
+        String actualValue = provider.getValue(fullKey);
+
+        assertThat(actualValue).isEqualTo(expectedValue);
+    }
+
+    @Test
+    @DisplayName("Should return null when key is null or blank")
+    void shouldReturnNullWhenKeyIsInvalid() {
+        assertThat(provider.getValue(null)).isNull();
+        assertThat(provider.getValue("")).isNull();
+        assertThat(provider.getValue("   ")).isNull();
+    }
+
+    @Test
+    @DisplayName("Should return null and handle exception when Redis is unavailable")
+    void shouldHandleRedisUnavailability() {
+        // Close the provider to simulate unavailability (it also shuts down the client)
+        provider.close();
+
+        String value = provider.getValue("any-key");
+
+        assertThat(value).isNull();
+    }
+
+    @Test
+    @DisplayName("Should return the namespace")
+    void shouldReturnNamespace() {
+        assertThat(provider.getNamespace()).isEqualTo("test-namespace");
+    }
+
+    @Test
+    @DisplayName("Should check availability correctly")
+    void shouldCheckAvailability() {
+        assertThat(provider.isAvailable()).isTrue();
+
+        provider.close();
+
+        assertThat(provider.isAvailable()).isFalse();
+    }
+}
