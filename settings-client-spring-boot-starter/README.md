@@ -55,12 +55,12 @@ public class MyService {
 
 ## 🛠️ Configuration Properties
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `industries.settings.client.api-base-url` | The base URL of the settings service. | (Required) |
-| `industries.settings.client.namespace` | Redis namespace for caching. | `settings` |
-| `industries.settings.client.redis-enabled` | Enable Redis-based L2 caching. | `true` |
-| `industries.settings.client.redis-l1-ttl` | TTL for L1 Caffeine cache. | `PT10H` |
-| `industries.settings.client.redis-l1-max-size` | Max size for L1 Caffeine cache. | `1000` |
-| `industries.settings.client.connection-timeout` | HTTP connection timeout. | `PT2S` |
-| `industries.settings.client.request-timeout` | HTTP request timeout. | `PT5S` |
+| Property                                        | Description                                    | Default    |
+|-------------------------------------------------|------------------------------------------------|------------|
+| `industries.settings.client.api-base-url`       | The base URL of the settings service.          | (Required) |
+| `industries.settings.client.namespace`          | Redis namespace for caching.                   | `settings` |
+| `industries.settings.client.redis-enabled`      | Enable Redis-based L2 caching.                 | `true`     |
+| `industries.settings.client.redis-l1-ttl`       | TTL for L1 Caffeine cache (ISO-8601 duration). | `PT10H`    |
+| `industries.settings.client.redis-l1-max-size`  | Max size for L1 Caffeine cache.                | `1000`     |
+| `industries.settings.client.connection-timeout` | HTTP connection timeout (ISO-8601 duration).   | `PT2S`     |
+| `industries.settings.client.request-timeout`    | HTTP request timeout (ISO-8601 duration).      | `PT5S`     |

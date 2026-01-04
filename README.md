@@ -8,16 +8,17 @@ The project is organized into several modules:
 
 - **[`settings-domain`](./settings-domain)**: Core domain models, entities, and business logic for configuration resolution.
 - **[`settings-service`](./settings-service)**: Spring Boot server application providing a REST API for configuration management and resolution.
-- **[`settings-client`](./settings-client)**: Java/Kotlin SDK for interacting with the settings service, featuring advanced L1/L2 caching.
+- **[`settings-client`](./settings-client)**: Java/Kotlin SDK for interacting with the settings service, featuring advanced L1 (Caffeine) and L2 (Redis) caching.
 - **[`settings-client-spring-boot-starter`](./settings-client-spring-boot-starter)**: Spring Boot Starter for seamless integration of the SDK.
 - **[`settings-webflux-app-example`](./settings-platform-apps-examples/settings-webflux-app-example)**: A sample application demonstrating the platform's usage.
+- **[`settings-platform-se-app`](./settings-platform-apps-examples/settings-platform-se-app)**: A simple Java SE application example.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Java 21**: The project targets Java 21 (with some modules supporting Java 17).
+- **Java 21**: The project targets Java 21.
 - **Maven**: For building the project.
-- **Docker**: For running infrastructure (MongoDB, Redis, RabbitMQ).
+- **Docker & Docker Compose**: For running infrastructure (MongoDB, Redis, RabbitMQ, etc.).
 
 ### Infrastructure Setup
 
@@ -64,7 +65,10 @@ mvn clean install
 ## 🛠️ Core Concepts
 
 ### Hierarchical Configuration
-Settings are resolved based on a hierarchy (Account > Service > Team > User > Agent), allowing for fine-grained overrides at different levels.
+Settings are resolved based on a hierarchy:
+**Service > Account > User > Agent**
+
+Allowing for fine-grained overrides at different levels.
 
 ### L1/L2 Caching
 The SDK supports a two-layer caching strategy:

@@ -61,7 +61,7 @@ MyConfig config = client.getConfiguration(request, MyConfig.class);
 
 ### Configuration Types
 Supported types (from `ConfigurationType` enum):
-- `ACCOUNT`, `SERVICE`, `TEAM`, `USER`, `AGENT`.
+- `SERVICE`, `ACCOUNT`, `USER`, `AGENT`.
 
 ---
 
@@ -71,7 +71,7 @@ The SDK is designed to be lightweight. You only need to include what you use.
 
 | Dependency           | Purpose                  | Scope      | Required           |
 |----------------------|--------------------------|------------|--------------------|
-| `setting-domain`     | Domain models            | `compile`  | ✅                  |
+| `settings-domain`    | Domain models            | `compile`  | ✅                  |
 | `jackson-databind`   | JSON Deserialization     | `provided` | Optional (Default) |
 | `slf4j-api`          | Logging                  | `provided` | ✅                  |
 | `nimbus-jose-jwt`    | Token signing/validation | `provided` | Optional           |
@@ -119,8 +119,10 @@ IndustriesSettingsClient client = IndustriesSettingsClient.builder()
 2.  **Resource Management**: Always call `client.close()` when your application shuts down to release HTTP and Redis connections.
 3.  **Timeouts**: Default timeouts are conservative. Customize them in the builder for your specific latency requirements:
     ```java
-    .connectionTimeout(Duration.ofSeconds(2))
-    .requestTimeout(Duration.ofSeconds(5))
+    IndustriesSettingsClient client = IndustriesSettingsClient.builder()
+            .connectionTimeout(Duration.ofSeconds(2))
+            .requestTimeout(Duration.ofSeconds(5))
+            .build();
     ```
 4.  **Logging**: The SDK uses SLF4J. Enable `DEBUG` logging for `io.github.jlmc.poc.commons.settings` to troubleshoot request/cache issues.
 5.  **Redis L1 Cache**: Use `RedisL1L2Caffeine` for production. It uses Redis PUB/SUB to invalidate local memory caches, ensuring consistency while maintaining microsecond-level latency for hot keys.

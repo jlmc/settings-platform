@@ -59,6 +59,11 @@ Key configurations in `application.yaml`:
 
 ### Configuration Resolution
 - `GET /configurations`: Resolve configurations.
+  - Parameters:
+    - `service`: Service name (required).
+    - `account`: Account ID (optional).
+    - `user`: User ID (optional).
+    - `agent`: Agent ID (optional).
 
 ## 🏗️ Architecture
 

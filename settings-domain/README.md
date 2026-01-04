@@ -26,7 +26,11 @@ This module is intended to be a dependency for other modules in the project.
 ## 🛠️ Core Concepts
 
 ### Configuration Resolution
-The module provides the logic to merge configurations from different levels (Account, Service, Team, User, Agent) into a single `ResolvedConfiguration`.
+The module provides the logic to merge configurations from different levels into a single `ResolvedConfiguration`. 
+The default resolution hierarchy is:
+**Service > Account > User > Agent**
+
+Settings at lower levels (e.g., Agent) override settings at higher levels (e.g., Service).
 
 ### Encryption
 Supports RSA encryption for sensitive configuration values, ensuring they are only decrypted when needed.
