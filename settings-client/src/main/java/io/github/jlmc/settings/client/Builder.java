@@ -23,6 +23,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.jlmc.settings.client.LibraryDetector.isNimbusAvailable;
+import static io.github.jlmc.settings.client.LibraryDetector.isResilience4jRetryAvailable;
+
 public class Builder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Builder.class);
@@ -37,6 +40,11 @@ public class Builder {
     private AccessTokenProvider accessTokenProvider;
     private DistributedConfigProvider distributedConfigProvider;
     private boolean useRetryExecutor = false;
+
+    public static JsonDeserializer defaultJsonDeserializer() {
+        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+        return new JacksonJsonDeserializer(objectMapper);
+    }
 
     public Builder apiBaseUrl(String value) {
         LOGGER.debug("Setting apiBaseUrl to: {}", value);
@@ -98,7 +106,6 @@ public class Builder {
         return this;
     }
 
-
     public IndustriesSettingsClient build() {
         LOGGER.info("Starting IndustriesSettingsClient build process...");
         if (apiBaseUrl == null) {
@@ -142,26 +149,20 @@ public class Builder {
         return client;
     }
 
-
     private AccessTokenProvider lazyDefaultAccessTokenProvider(HttpExecutionStrategy httpStrategy) {
         // Check if Nimbus JOSE JWT classes are on the classpath
-        boolean nimbusAvailable;
-        try {
-            Class.forName("com.nimbusds.jwt.SignedJWT");
-            Class.forName("com.nimbusds.jose.JWSHeader");
-            Class.forName("com.nimbusds.jose.crypto.ECDSASigner");
-            nimbusAvailable = true;
-            LOGGER.debug("Nimbus JOSE JWT library detected on classpath.");
-        } catch (ClassNotFoundException e) {
-            nimbusAvailable = false;
-            LOGGER.warn("Nimbus JOSE JWT library not found on classpath. PrivilegedCredentialsStrategy will not be added.");
+        boolean isNimbusAvailable = isNimbusAvailable();
+        if (isNimbusAvailable) {
+            LOGGER.info("Nimbus JOSE JWT library detected on classpath. PrivilegedCredentialsStrategy will be available.");
+        } else {
+            LOGGER.info("Nimbus JOSE JWT library not found on classpath. PrivilegedCredentialsStrategy will not be available.");
         }
 
         List<TokenAcquisitionStrategy<? extends AuthCredentials>> strategies = new ArrayList<>();
         strategies.add(new BearerTokenStrategy());
         strategies.add(new ClientCredentialsStrategy(httpStrategy, jsonDeserializer));
 
-        if (nimbusAvailable) {
+        if (isNimbusAvailable) {
             strategies.add(new PrivilegedCredentialsStrategy(httpStrategy, jsonDeserializer));
             LOGGER.info("PrivilegedCredentialsStrategy added to TokenOrchestrator.");
         } else {
@@ -170,6 +171,10 @@ public class Builder {
 
         return new TokenOrchestrator(strategies);
     }
+
+    /* =========================
+       Defaults
+       ========================= */
 
     private RetryExecutor retryExecutor() {
         if (!useRetryExecutor) {
@@ -182,36 +187,18 @@ public class Builder {
             return retryExecutor;
         }
 
-        // Check if Resilience4j classes are on the classpath
-        boolean resilience4jAvailable;
-        try {
-            Class.forName("io.github.resilience4j.retry.Retry");
-            Class.forName("io.github.resilience4j.retry.RetryConfig");
-            resilience4jAvailable = true;
-            LOGGER.debug("Resilience4j classes detected on classpath.");
-        } catch (ClassNotFoundException e) {
-            resilience4jAvailable = false;
-            LOGGER.warn("Resilience4j classes not found on classpath. RetryExecutor will not be created.");
-        }
-
-        if (!resilience4jAvailable) {
+        // Check if Resilience4jRetry classes are on the classpath
+        boolean isResilience4jRetryAvailable = isResilience4jRetryAvailable();
+        if (!isResilience4jRetryAvailable) {
+            LOGGER.info("Resilience4j library not detected on classpath. RetryExecutor will not be created.");
             return null;
         }
+
+        LOGGER.debug("Resilience4j classes detected on classpath.");
 
         // Lazily initialize the default RetryExecutor
         retryExecutor = Resilience4jRetryExecutor.defaultRetryExecutor();
         LOGGER.info("Default Resilience4jRetryExecutor initialized.");
         return retryExecutor;
     }
-
-
-    /* =========================
-       Defaults
-       ========================= */
-
-    public static JsonDeserializer defaultJsonDeserializer() {
-        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-        return new JacksonJsonDeserializer(objectMapper);
-    }
-
 }
