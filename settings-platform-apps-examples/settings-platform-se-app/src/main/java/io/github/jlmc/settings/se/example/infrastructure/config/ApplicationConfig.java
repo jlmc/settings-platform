@@ -9,8 +9,6 @@ import io.github.jlmc.settings.client.redis.DistributedConfigProvider;
 import io.github.jlmc.settings.client.redis.RedisDistributedConfigProvider;
 import io.github.jlmc.settings.client.redis.keys.StandardKeyBuilder;
 import io.github.jlmc.settings.client.redis.providers.RedisL1L2CaffeineProvider;
-import io.github.jlmc.settings.client.resilience.Resilience4jRetryExecutor;
-import io.github.jlmc.settings.client.resilience.RetryExecutor;
 import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
 import io.github.jlmc.settings.se.example.adapter.out.config.IndustriesSettingsAdapter;
 import io.github.jlmc.settings.se.example.application.in.GetConfigurationUseCase;
@@ -50,14 +48,14 @@ public class ApplicationConfig {
                         ResolvedConfigurationAssembler.defaultAssembler(objectMapper)
                 );
 
-        RetryExecutor retryExecutor = Resilience4jRetryExecutor.defaultRetryExecutor();
+        //RetryExecutor retryExecutor = Resilience4jRetryExecutor.defaultRetryExecutor();
 
         IndustriesSettingsClient client =
                 IndustriesSettingsClient.builder()
                         .apiBaseUrl(apiBaseUrl)
                         .userAgent("settings-se-example-app/1.0.0")
                         .useRetryExecutor(true)
-                        .retryExecutor(retryExecutor)
+                        //.retryExecutor(retryExecutor)
                         .redisExecutionStrategy(redisProvider)
                         .build();
 

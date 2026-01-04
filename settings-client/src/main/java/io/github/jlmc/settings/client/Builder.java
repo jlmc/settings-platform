@@ -6,6 +6,7 @@ import io.github.jlmc.settings.client.http.HttpExecutionStrategy;
 import io.github.jlmc.settings.client.json.JacksonJsonDeserializer;
 import io.github.jlmc.settings.client.json.JsonDeserializer;
 import io.github.jlmc.settings.client.redis.DistributedConfigProvider;
+import io.github.jlmc.settings.client.resilience.Resilience4jRetryExecutor;
 import io.github.jlmc.settings.client.resilience.ResilientHttpExecutionStrategy;
 import io.github.jlmc.settings.client.resilience.RetryExecutor;
 import io.github.jlmc.settings.client.token.AccessTokenProvider;
@@ -13,11 +14,15 @@ import io.github.jlmc.settings.client.token.BearerTokenStrategy;
 import io.github.jlmc.settings.client.token.ClientCredentialsStrategy;
 import io.github.jlmc.settings.client.token.PrivilegedCredentialsStrategy;
 import io.github.jlmc.settings.client.token.TokenOrchestrator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.List;
 
 public class Builder {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Builder.class);
 
     private String apiBaseUrl;
     private Duration connectionTimeout = HttpConstants.DEFAULT_CONNECTION_TIMEOUT;
@@ -119,15 +124,37 @@ public class Builder {
 
     private RetryExecutor retryExecutor() {
         if (!useRetryExecutor) {
+            LOGGER.info("RetryExecutor is disabled via configuration.");
             return null;
         }
 
-       if (retryExecutor != null) {
-           return retryExecutor;
-       }
+        if (retryExecutor != null) {
+            LOGGER.debug("Returning cached RetryExecutor instance.");
+            return retryExecutor;
+        }
 
-       return null; // TODO: replace with defaultRetryExecutor();
+        // Check if Resilience4j classes are on the classpath
+        boolean resilience4jAvailable;
+        try {
+            Class.forName("io.github.resilience4j.retry.Retry");
+            Class.forName("io.github.resilience4j.retry.RetryConfig");
+            resilience4jAvailable = true;
+            LOGGER.debug("Resilience4j classes detected on classpath.");
+        } catch (ClassNotFoundException e) {
+            resilience4jAvailable = false;
+            LOGGER.warn("Resilience4j classes not found on classpath. RetryExecutor will not be created.");
+        }
+
+        if (!resilience4jAvailable) {
+            return null;
+        }
+
+        // Lazily initialize the default RetryExecutor
+        retryExecutor = Resilience4jRetryExecutor.defaultRetryExecutor();
+        LOGGER.info("Default Resilience4jRetryExecutor initialized.");
+        return retryExecutor;
     }
+
 
     /* =========================
        Defaults
