@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SettingsSeExampleApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="io.github.jlmc.settings.se.example.SettingsSeExampleApplication" />
+    <module name="settings-platform-se-app" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="io.github.jlmc.settings.se.example.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
