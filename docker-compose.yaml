@@ -362,6 +362,7 @@ services:
       - "8081:8081"
     environment:
       SETTINGS_WEBFLUX_APP_CLIENT_API_BASE_URL: http://settings-service:8080
+      # SETTINGS_WEBFLUX_APP_CLIENT_API_BASE_URL: http://api-gateway/settings-service
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PASSWORD: YOUR_STRONG_PASSWORD
       SPRING_DATA_MONGODB_URI: mongodb://me:me@mongo1:27017,mongo2:27017/tdk-healthcare-db?replicaSet=rs-cluster-example&authSource=admin
