@@ -74,6 +74,9 @@ public class RedisL1L2CaffeineProvider extends AbstractRedisSettingsProvider {
         if (key == null || key.isBlank()) return null;
         try {
             // Frontend handles: L1 check -> L2 fetch -> L1 populate
+            // BUT: CacheFrontend.get(key) uses the EXACT key provided.
+            // Our Redis keys are prefixed with "namespace:".
+            //String redisKey = namespace + ":" + key;
             return frontend.get(key);
         } catch (Exception e) {
             // Catching all to ensure high availability (return null so business can use fallback)
