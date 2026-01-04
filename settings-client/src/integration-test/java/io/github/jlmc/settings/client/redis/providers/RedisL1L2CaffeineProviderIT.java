@@ -205,10 +205,12 @@ class RedisL1L2CaffeineProviderIT {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Cache<String, String> getL1Cache() throws Exception {
+    private Cache<String, String> getL1Cache() {
+        return provider.caffeineCache;
+        /*
         Field field = RedisL1L2CaffeineProvider.class.getDeclaredField("caffeineCache");
         field.setAccessible(true);
         return (Cache<String, String>) field.get(provider);
+         */
     }
 }

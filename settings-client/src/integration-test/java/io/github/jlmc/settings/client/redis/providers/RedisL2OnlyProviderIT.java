@@ -25,12 +25,13 @@ class RedisL2OnlyProviderIT {
 
     private RedisL2OnlyProvider provider;
     private RedisClient redisClient;
+    private RedisKeyGenerator keyGenerator = new RedisKeyGenerator("test-namespace");
 
     @BeforeEach
     void setUp() {
         String redisUri = String.format("redis://%s:%d", redis.getHost(), redis.getMappedPort(6379));
         redisClient = RedisClient.create(redisUri);
-        provider = new RedisL2OnlyProvider(redisClient, "test-namespace");
+        provider = new RedisL2OnlyProvider(redisClient, keyGenerator.namespace());
     }
 
     @AfterEach
@@ -43,7 +44,7 @@ class RedisL2OnlyProviderIT {
     @Test
     @DisplayName("Should return null when key does not exist")
     void shouldReturnNullWhenKeyDoesNotExist() {
-        String value = provider.getValue("non-existent-key");
+        String value = provider.getValue(keyGenerator.generateFullKey("non-existent-key"));
 
         assertThat(value).isNull();
     }
@@ -51,7 +52,7 @@ class RedisL2OnlyProviderIT {
     @Test
     @DisplayName("Should return value when key exists in Redis")
     void shouldReturnValueWhenKeyExists() {
-        String fullKey = "test-namespace:existing-key";
+        String fullKey = keyGenerator.generateFullKey("existing-key");
         String expectedValue = "{\"name\":\"test\"}";
         redisClient.connect().sync().set(fullKey, expectedValue);
 

@@ -11,7 +11,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,13 +26,13 @@ class RedisL1L2SimpleMapProviderIT {
 
     private RedisL1L2SimpleMapProvider provider;
     private RedisClient redisClient;
-    private final String namespace = "test-namespace";
+    private RedisKeyGenerator keyGenerator = new RedisKeyGenerator("test-namespace");
 
     @BeforeEach
     void setUp() {
         String redisUri = String.format("redis://%s:%d", redis.getHost(), redis.getMappedPort(6379));
         redisClient = RedisClient.create(redisUri);
-        provider = new RedisL1L2SimpleMapProvider(redisClient, namespace);
+        provider = new RedisL1L2SimpleMapProvider(redisClient, keyGenerator.namespace());
     }
 
     @AfterEach
@@ -54,7 +53,7 @@ class RedisL1L2SimpleMapProviderIT {
     @Test
     @DisplayName("Should return value and populate L1 when key exists in Redis")
     void shouldReturnValueAndPopulateL1WhenKeyExists() throws Exception {
-        String fullKey = namespace + ":" + "existing-key";
+        String fullKey = keyGenerator.generateFullKey("existing-key");
         String expectedValue = "{\"name\":\"test\"}";
         try (StatefulRedisConnection<String, String> connection = redisClient.connect()) {
             connection.sync().set(fullKey, expectedValue);
@@ -73,8 +72,7 @@ class RedisL1L2SimpleMapProviderIT {
     @Test
     @DisplayName("Should invalidate L1 when key is updated in Redis")
     void shouldInvalidateL1WhenKeyIsUpdated() throws Exception {
-        //String key = "test-key";
-        String fullKey = namespace + ":" + "test-key";
+        String fullKey = keyGenerator.generateFullKey("test-key");
         String initialValue = "initial";
         String updatedValue = "updated";
 
@@ -110,7 +108,7 @@ class RedisL1L2SimpleMapProviderIT {
     void shouldHandleRedisUnavailability() {
         provider.close();
 
-        String value = provider.getValue("any-key");
+        String value = provider.getValue(keyGenerator.generateFullKey("any-key"));
 
         assertThat(value).isNull();
     }
@@ -118,7 +116,7 @@ class RedisL1L2SimpleMapProviderIT {
     @Test
     @DisplayName("Should return the namespace")
     void shouldReturnNamespace() {
-        assertThat(provider.getNamespace()).isEqualTo(namespace);
+        assertThat(provider.getNamespace()).isEqualTo(keyGenerator.namespace());
     }
 
     @Test
@@ -131,10 +129,12 @@ class RedisL1L2SimpleMapProviderIT {
         assertThat(provider.isAvailable()).isFalse();
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, String> getL1Cache() throws Exception {
+    private Map<String, String> getL1Cache() {
+        return provider.mapCache;
+        /*
         Field field = RedisL1L2SimpleMapProvider.class.getDeclaredField("mapCache");
         field.setAccessible(true);
         return (Map<String, String>) field.get(provider);
+         */
     }
 }

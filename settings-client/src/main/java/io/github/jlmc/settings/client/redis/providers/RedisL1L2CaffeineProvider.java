@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisL1L2CaffeineProvider extends AbstractRedisSettingsProvider {
 
-    private final CacheFrontend<String, String> frontend;
-    private final Cache<String, String> caffeineCache;
-    private final TrackingArgs trackingArgs;
+    protected final CacheFrontend<String, String> frontend;
+    protected final Cache<String, String> caffeineCache;
+    protected final TrackingArgs trackingArgs;
 
     public RedisL1L2CaffeineProvider(RedisClient redisClient,
                                      String namespace,

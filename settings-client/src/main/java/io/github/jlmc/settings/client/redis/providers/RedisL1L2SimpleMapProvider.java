@@ -17,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RedisL1L2SimpleMapProvider extends AbstractRedisSettingsProvider {
 
-    private final CacheFrontend<String, String> frontend;
-    private final Map<String, String> mapCache;
-    private final TrackingArgs trackingArgs;
+    protected final CacheFrontend<String, String> frontend;
+    protected final Map<String, String> mapCache;
+    protected final TrackingArgs trackingArgs;
 
     public RedisL1L2SimpleMapProvider(RedisClient redisClient, String namespace) {
         super(redisClient, namespace);
