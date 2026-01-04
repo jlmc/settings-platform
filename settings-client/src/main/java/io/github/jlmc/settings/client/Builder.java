@@ -39,58 +39,70 @@ public class Builder {
     private boolean useRetryExecutor = false;
 
     public Builder apiBaseUrl(String value) {
+        LOGGER.debug("Setting apiBaseUrl to: {}", value);
         this.apiBaseUrl = value;
         return this;
     }
 
     public Builder connectionTimeout(Duration value) {
+        LOGGER.debug("Setting connectionTimeout to: {}", value);
         this.connectionTimeout = value;
         return this;
     }
 
     public Builder requestTimeout(Duration value) {
+        LOGGER.debug("Setting requestTimeout to: {}", value);
         this.requestTimeout = value;
         return this;
     }
 
     public Builder userAgent(String value) {
+        LOGGER.debug("Setting userAgent to: {}", value);
         this.userAgent = value;
         return this;
     }
 
     public Builder jsonDeserializer(JsonDeserializer value) {
+        LOGGER.debug("Setting jsonDeserializer to: {}", value != null ? value.getClass().getSimpleName() : "null");
         this.jsonDeserializer = value;
         return this;
     }
 
     public Builder retryExecutor(RetryExecutor value) {
+        LOGGER.debug("Setting retryExecutor to: {}", value != null ? value.getClass().getSimpleName() : "null");
         this.retryExecutor = value;
         return this;
     }
 
     public Builder useRetryExecutor(boolean value) {
+        LOGGER.debug("Setting useRetryExecutor to: {}", value);
         this.useRetryExecutor = value;
         return this;
     }
 
     public Builder redisExecutionStrategy(DistributedConfigProvider value) {
+        LOGGER.debug("Setting distributedConfigProvider to: {}", value != null ? value.getClass().getSimpleName() : "null");
         this.distributedConfigProvider = value;
         return this;
     }
 
     public Builder httpExecutionStrategy(HttpExecutionStrategy value) {
+        LOGGER.debug("Setting httpExecutionStrategy to: {}", value != null ? value.getClass().getSimpleName() : "null");
         this.httpExecutionStrategy = value;
         return this;
     }
 
     public Builder accessTokenProvider(AccessTokenProvider value) {
+        LOGGER.debug("Setting accessTokenProvider to: {}", value != null ? value.getClass().getSimpleName() : "null");
         this.accessTokenProvider = value;
         return this;
     }
 
 
     public IndustriesSettingsClient build() {
+        LOGGER.info("Starting IndustriesSettingsClient build process...");
         if (apiBaseUrl == null) {
+            LOGGER.warn("Build failed: apiBaseUrl is required");
             throw new IllegalStateException("apiBaseUrl is required");
         }
 
@@ -103,13 +115,21 @@ public class Builder {
                         userAgent,
                         retryExecutor()
                 );
+        LOGGER.debug("Using HttpExecutionStrategy: {}", httpStrategy.getClass().getSimpleName());
 
         AccessTokenProvider tokenProvider =
                 accessTokenProvider != null
                         ? accessTokenProvider
                         : lazyDefaultAccessTokenProvider(httpStrategy);
+        LOGGER.debug("Using AccessTokenProvider: {}", tokenProvider.getClass().getSimpleName());
 
-        return new IndustriesSettingsClient(
+        if (distributedConfigProvider != null) {
+            LOGGER.debug("Using DistributedConfigProvider: {}", distributedConfigProvider.getClass().getSimpleName());
+        } else {
+            LOGGER.debug("No DistributedConfigProvider provided.");
+        }
+
+        IndustriesSettingsClient client = new IndustriesSettingsClient(
                 apiBaseUrl,
                 httpStrategy,
                 tokenProvider,
@@ -117,6 +137,9 @@ public class Builder {
                 requestTimeout,
                 distributedConfigProvider
         );
+
+        LOGGER.info("IndustriesSettingsClient built successfully for apiBaseUrl: {}", apiBaseUrl);
+        return client;
     }
 
 
