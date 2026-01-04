@@ -5,8 +5,7 @@ tdk:
 
 spring:
   application:
-    name: poc-tdk-settings-l1-l2-service
-
+    name: settings-service
 
   # JACKSON configurations
   jackson:

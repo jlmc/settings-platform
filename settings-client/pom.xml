@@ -69,6 +69,7 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>10.5</version>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

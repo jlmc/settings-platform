@@ -1,4 +1,4 @@
-# 📘 poc-tdk-settings-client-sdk
+# 📘 settings-client-sdk
 
 Java/Kotlin SDK for Industries Settings, with support for **OAuth2 token acquisition**, **configuration retrieval**, and **Redis caching**.
 
@@ -69,14 +69,15 @@ Supported types (from `ConfigurationType` enum):
 
 The SDK is designed to be lightweight. You only need to include what you use.
 
-| Dependency             | Purpose                  | Scope      | Required           |
-|------------------------|--------------------------|------------|--------------------|
-| `poc-tdk-settings-sdk` | Domain models            | `compile`  | ✅                  |
-| `nimbus-jose-jwt`      | Token signing/validation | `provided` | ✅                  |
-| `jackson-databind`     | JSON Deserialization     | `provided` | Optional (Default) |
-| `slf4j-api`            | Logging                  | `provided` | ✅                  |
-| `lettuce-core`         | Redis support            | `provided` | Optional           |
-| `caffeine`             | L1 Cache support         | `provided` | Optional           |
+| Dependency           | Purpose                  | Scope      | Required           |
+|----------------------|--------------------------|------------|--------------------|
+| `setting-domain`     | Domain models            | `compile`  | ✅                  |
+| `jackson-databind`   | JSON Deserialization     | `provided` | Optional (Default) |
+| `slf4j-api`          | Logging                  | `provided` | ✅                  |
+| `nimbus-jose-jwt`    | Token signing/validation | `provided` | Optional           |
+| `lettuce-core`       | Redis support            | `provided` | Optional           |
+| `caffeine`           | L1 Cache support         | `provided` | Optional           |
+| `resilience4j-retry` | Retry support            | `provided` | Optional           |
 
 ---
 
