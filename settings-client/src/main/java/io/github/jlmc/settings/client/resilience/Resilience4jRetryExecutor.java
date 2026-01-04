@@ -17,17 +17,23 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 
-/**
- * Default implementation of {@link RetryExecutor} backed by the Resilience4j library.
- *
- * This executor decorates a {@link Supplier} with a configured {@link Retry} policy,
- * allowing transient failures to be retried automatically according to
- * the retry configuration (e.g., number of attempts, wait duration, or backoff strategy).
- */
+/// Default implementation of [RetryExecutor] backed by the Resilience4j library.
+///
+/// This executor decorates a [Supplier] with a configured [Retry] policy,
+/// allowing transient failures to be retried automatically according to
+/// the retry configuration (e.g., number of attempts, wait duration, or backoff strategy).
 public class Resilience4jRetryExecutor implements RetryExecutor {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(Resilience4jRetryExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(Resilience4jRetryExecutor.class);
+
+    public static final Set<Integer> RETRIABLE_HTTP_STATUSES = Set.of(
+            408, // REQUEST_TIMEOUT
+            500, // INTERNAL_SERVER_ERROR
+            502, // BAD_GATEWAY
+            503, // SERVICE_UNAVAILABLE
+            504  // GATEWAY_TIMEOUT
+    );
+    public static final int DEFAULT_MAX_RETRIES = 3;
 
     private final Retry retry;
 
@@ -94,30 +100,18 @@ public class Resilience4jRetryExecutor implements RetryExecutor {
                 : value.substring(0, maxLength);
     }
 
-    public static final int DEFAULT_MAX_RETRIES = 3;
+
     public static RetryExecutor defaultRetryExecutor() {
         return defaultRetryExecutor(
                 DEFAULT_MAX_RETRIES,
-                Set.of(
-                        408, // REQUEST_TIMEOUT
-                        500, // INTERNAL_SERVER_ERROR
-                        502, // BAD_GATEWAY
-                        503, // SERVICE_UNAVAILABLE
-                        504  // GATEWAY_TIMEOUT
-                )
+                RETRIABLE_HTTP_STATUSES
         );
     }
 
     public static RetryExecutor defaultRetryExecutor(int maxRetries) {
         return defaultRetryExecutor(
                 maxRetries,
-                Set.of(
-                        408,
-                        500,
-                        502,
-                        503,
-                        504
-                )
+                RETRIABLE_HTTP_STATUSES
         );
     }
 
