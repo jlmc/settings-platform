@@ -35,6 +35,8 @@ public class RedisL1L2SimpleMapProvider extends AbstractRedisSettingsProvider {
         this.connection.addListener((PushMessage message) -> {
             if (message.getType().equals("invalidate")) {
                 logger.debug("L1 SimpleMap Invalidation received: {}", message.getContent());
+                // For BCAST mode, we might get prefix invalidations.
+                // Lettuce's CacheFrontend might handle this, but let's be sure.
             }
         });
 
