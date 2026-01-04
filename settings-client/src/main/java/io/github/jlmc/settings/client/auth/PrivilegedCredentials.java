@@ -7,8 +7,8 @@ import java.util.Objects;
  */
 public record PrivilegedCredentials(
         String clientId,
-        String clientPrivateKeyB64,
         String clientKeyId,
+        String clientPrivateKeyB64,
         String engineerOauthTokenUrl
 ) implements AuthCredentials {
 
