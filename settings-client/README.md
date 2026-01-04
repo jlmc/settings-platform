@@ -13,7 +13,7 @@ Add the SDK to your `pom.xml`. Note that most dependencies are marked as `provid
 ```xml
 <dependency>
     <groupId>io.github.jlmc</groupId>
-    <artifactId>poc-tdk-settings-sdk-client</artifactId>
+    <artifactId>settings-client</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 
