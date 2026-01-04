@@ -118,14 +118,15 @@ public class Builder {
     }
 
     private RetryExecutor retryExecutor() {
-        return null;
-        /*
         if (!useRetryExecutor) {
             return null;
         }
-        return retryExecutor != null ? retryExecutor : defaultRetryExecutor();
 
-         */
+       if (retryExecutor != null) {
+           return retryExecutor;
+       }
+
+       return null; // TODO: replace with defaultRetryExecutor();
     }
 
     /* =========================
