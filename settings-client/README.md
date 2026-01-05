@@ -102,6 +102,7 @@ To enable caching and reduce network latency, configure a `DistributedConfigProv
 ```java
 RedisClient redisClient = RedisClient.create("redis://localhost:6379");
 
+// Using implementations from io.github.jlmc.settings.client.adapters.redis
 DistributedConfigProvider redisProvider = new RedisDistributedConfigProvider(
     new RedisL1L2CaffeineProvider(
         redisClient,
@@ -168,7 +169,7 @@ The project uses different suffixes to distinguish test types:
 
 1. **Singleton Instance**: Always reuse the `IndustriesSettingsClient`.
 2. **Resource Cleanup**: Call `client.close()` during application shutdown to release HTTP and Redis resources.
-3. **Logging**: Enable `DEBUG` logging for `io.github.jlmc.settings.client` to trace cache hits/misses and HTTP calls.
+3. **Logging**: Enable `DEBUG` logging for `io.github.jlmc.settings.client.core` to trace cache hits/misses and HTTP calls.
 4. **Timeouts**: Customize timeouts for your environment:
 
 ```java
