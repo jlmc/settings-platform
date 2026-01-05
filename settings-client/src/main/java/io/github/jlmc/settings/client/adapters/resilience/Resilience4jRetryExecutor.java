@@ -148,8 +148,7 @@ public class Resilience4jRetryExecutor implements RetryExecutor {
                         })
                         .build();
 
-        Retry retry =
-                Retry.of("industriesSettingsClientRetry", config);
+        Retry retry = Retry.of("industriesSettingsClientRetry", config);
 
         return new Resilience4jRetryExecutor(retry);
     }
