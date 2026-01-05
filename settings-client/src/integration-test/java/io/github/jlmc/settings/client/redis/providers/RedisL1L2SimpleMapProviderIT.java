@@ -11,9 +11,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @Testcontainers(disabledWithoutDocker = true)
 class RedisL1L2SimpleMapProviderIT {
@@ -24,35 +26,35 @@ class RedisL1L2SimpleMapProviderIT {
             new GenericContainer<>(DockerImageName.parse("redis:7.4.2-alpine"))
                     .withExposedPorts(6379);
 
-    private RedisL1L2SimpleMapProvider provider;
+    private RedisL1L2SimpleMapProvider victim;
     private RedisClient redisClient;
-    private RedisKeyGenerator keyGenerator = new RedisKeyGenerator("test-namespace");
+    private final RedisKeyGenerator keyGenerator = new RedisKeyGenerator("test-namespace");
 
     @BeforeEach
     void setUp() {
         String redisUri = String.format("redis://%s:%d", redis.getHost(), redis.getMappedPort(6379));
         redisClient = RedisClient.create(redisUri);
-        provider = new RedisL1L2SimpleMapProvider(redisClient, keyGenerator.namespace());
+        victim = new RedisL1L2SimpleMapProvider(redisClient, keyGenerator.namespace());
     }
 
     @AfterEach
     void tearDown() {
-        if (provider != null) {
-            provider.close();
+        if (victim != null) {
+            victim.close();
         }
     }
 
     @Test
     @DisplayName("Should return null when key does not exist")
     void shouldReturnNullWhenKeyDoesNotExist() {
-        String value = provider.getValue("non-existent-key");
+        String value = victim.getValue("non-existent-key");
 
         assertThat(value).isNull();
     }
 
     @Test
     @DisplayName("Should return value and populate L1 when key exists in Redis")
-    void shouldReturnValueAndPopulateL1WhenKeyExists() throws Exception {
+    void shouldReturnValueAndPopulateL1WhenKeyExists() {
         String fullKey = keyGenerator.generateFullKey("existing-key");
         String expectedValue = "{\"name\":\"test\"}";
         try (StatefulRedisConnection<String, String> connection = redisClient.connect()) {
@@ -60,18 +62,18 @@ class RedisL1L2SimpleMapProviderIT {
         }
 
         // 1st call - should fetch from Redis and populate L1
-        String actualValue1 = provider.getValue(fullKey);
+        String actualValue1 = victim.getValue(fullKey);
         assertThat(actualValue1).isEqualTo(expectedValue);
         assertThat(getL1Cache().get(fullKey)).isEqualTo(expectedValue);
 
         // 2nd call - should come from L1
-        String actualValue2 = provider.getValue(fullKey);
+        String actualValue2 = victim.getValue(fullKey);
         assertThat(actualValue2).isEqualTo(expectedValue);
     }
 
     @Test
     @DisplayName("Should invalidate L1 when key is updated in Redis")
-    void shouldInvalidateL1WhenKeyIsUpdated() throws Exception {
+    void shouldInvalidateL1WhenKeyIsUpdated() {
         String fullKey = keyGenerator.generateFullKey("test-key");
         String initialValue = "initial";
         String updatedValue = "updated";
@@ -81,7 +83,7 @@ class RedisL1L2SimpleMapProviderIT {
         }
 
         // Populate L1
-        provider.getValue(fullKey);
+        victim.getValue(fullKey);
         assertThat(getL1Cache().get(fullKey)).isEqualTo(initialValue);
 
         // Update in Redis via another connection
@@ -90,15 +92,15 @@ class RedisL1L2SimpleMapProviderIT {
         }
 
         // Wait a bit for invalidation message to arrive (Server-side tracking is asynchronous)
-        for (int i = 0; i < 20 && getL1Cache().containsKey(fullKey); i++) {
-            Thread.sleep(100);
-        }
-
         // L1 should be empty or at least not contain the old value for the key
+        await().atMost(Duration.ofSeconds(2))
+                .pollInterval(Duration.ofMillis(50))
+                .untilAsserted(() -> assertThat(getL1Cache().get(fullKey)).isNull());
+
         assertThat(getL1Cache().get(fullKey)).isNull();
 
         // Should fetch new value from Redis
-        String actualValue = provider.getValue(fullKey);
+        String actualValue = victim.getValue(fullKey);
         assertThat(actualValue).isEqualTo(updatedValue);
         assertThat(getL1Cache().get(fullKey)).isEqualTo(updatedValue);
     }
@@ -106,9 +108,9 @@ class RedisL1L2SimpleMapProviderIT {
     @Test
     @DisplayName("Should return null and handle exception when Redis is unavailable")
     void shouldHandleRedisUnavailability() {
-        provider.close();
+        victim.close();
 
-        String value = provider.getValue(keyGenerator.generateFullKey("any-key"));
+        String value = victim.getValue(keyGenerator.generateFullKey("any-key"));
 
         assertThat(value).isNull();
     }
@@ -116,21 +118,21 @@ class RedisL1L2SimpleMapProviderIT {
     @Test
     @DisplayName("Should return the namespace")
     void shouldReturnNamespace() {
-        assertThat(provider.getNamespace()).isEqualTo(keyGenerator.namespace());
+        assertThat(victim.getNamespace()).isEqualTo(keyGenerator.namespace());
     }
 
     @Test
     @DisplayName("Should check availability correctly")
     void shouldCheckAvailability() {
-        assertThat(provider.isAvailable()).isTrue();
+        assertThat(victim.isAvailable()).isTrue();
 
-        provider.close();
+        victim.close();
 
-        assertThat(provider.isAvailable()).isFalse();
+        assertThat(victim.isAvailable()).isFalse();
     }
 
     private Map<String, String> getL1Cache() {
-        return provider.mapCache;
+        return victim.mapCache;
         /*
         Field field = RedisL1L2SimpleMapProvider.class.getDeclaredField("mapCache");
         field.setAccessible(true);
