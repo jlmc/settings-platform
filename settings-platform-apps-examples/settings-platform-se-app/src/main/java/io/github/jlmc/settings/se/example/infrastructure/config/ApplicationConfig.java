@@ -1,14 +1,14 @@
 package io.github.jlmc.settings.se.example.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.jlmc.settings.client.ConfigurationRequest;
-import io.github.jlmc.settings.client.IndustriesSettingsClient;
-import io.github.jlmc.settings.client.json.JacksonJsonDeserializer;
-import io.github.jlmc.settings.client.json.JsonDeserializer;
-import io.github.jlmc.settings.client.redis.DistributedConfigProvider;
-import io.github.jlmc.settings.client.redis.RedisDistributedConfigProvider;
-import io.github.jlmc.settings.client.redis.keys.StandardKeyBuilder;
-import io.github.jlmc.settings.client.redis.providers.RedisL1L2CaffeineProvider;
+import io.github.jlmc.settings.client.adapters.json.JacksonJsonDeserializer;
+import io.github.jlmc.settings.client.adapters.redis.RedisDistributedConfigProvider;
+import io.github.jlmc.settings.client.adapters.redis.keys.StandardKeyBuilder;
+import io.github.jlmc.settings.client.adapters.redis.providers.RedisL1L2CaffeineProvider;
+import io.github.jlmc.settings.client.core.ConfigurationRequest;
+import io.github.jlmc.settings.client.core.IndustriesSettingsClient;
+import io.github.jlmc.settings.client.ports.out.DistributedConfigProvider;
+import io.github.jlmc.settings.client.ports.out.JsonDeserializer;
 import io.github.jlmc.settings.domain.components.ResolvedConfigurationAssembler;
 import io.github.jlmc.settings.se.example.adapter.out.config.IndustriesSettingsAdapter;
 import io.github.jlmc.settings.se.example.application.in.GetConfigurationUseCase;

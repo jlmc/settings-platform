@@ -1,8 +1,8 @@
 package io.github.jlmc.settings.se.example.adapter.out.config;
 
-import io.github.jlmc.settings.client.ConfigurationRequest;
-import io.github.jlmc.settings.client.IndustriesSettingsClient;
-import io.github.jlmc.settings.client.auth.BearerTokenCredentials;
+import io.github.jlmc.settings.client.core.ConfigurationRequest;
+import io.github.jlmc.settings.client.core.IndustriesSettingsClient;
+import io.github.jlmc.settings.client.core.auth.BearerTokenCredentials;
 import io.github.jlmc.settings.domain.entities.ConfigurationType;
 import io.github.jlmc.settings.se.example.application.out.ConfigurationPort;
 import io.github.jlmc.settings.se.example.domain.MyConfig;

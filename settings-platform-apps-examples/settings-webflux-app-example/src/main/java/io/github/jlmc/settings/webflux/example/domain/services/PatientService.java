@@ -1,7 +1,7 @@
 package io.github.jlmc.settings.webflux.example.domain.services;
 
-import io.github.jlmc.settings.client.ConfigurationRequest;
-import io.github.jlmc.settings.client.auth.BearerTokenCredentials;
+import io.github.jlmc.settings.client.core.ConfigurationRequest;
+import io.github.jlmc.settings.client.core.auth.BearerTokenCredentials;
 import io.github.jlmc.settings.domain.entities.ConfigurationType;
 import io.github.jlmc.settings.webflux.example.domain.entities.PatientDataRepresentation;
 import io.github.jlmc.settings.webflux.example.domain.ports.IndustriesSettingsProviderPort;
